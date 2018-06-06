@@ -1,3 +1,10 @@
+'''
+    PrintableMusicCoverGenerator v1.1
+
+    Perthuis Jeremy
+'''
+
+
 import os
 from math import *
 from mutagen.mp3 import MP3
@@ -7,23 +14,22 @@ from Functions import *
 
 class Cover :
 
+    coverTitre="CD1"
     titleLimit=50
+    musicPath=""
     listMusicTitle=[]
     listMusicTitleFormat=[]
-    dictMusic={}
     templateDetails=[]
     coverExport=[]
-    coverTitre="CD1"
-    musicPath=""
 
     def __init__(self,path):
         self.musicPath=path
-        print("debut")
+
         self.ScanFolder()
         self.titleProcessing()
         self.verification()
-        self.buildCover()
-        self.writeTemplate()
+        #self.buildCover()
+        #self.writeTemplate()
 
 
     # Stocke les titres dans l'ordre alaphabetique dans une liste
@@ -32,14 +38,6 @@ class Cover :
         for elem in liste:
             self.listMusicTitle.append(elem)
             print(elem)
-
-    # Ecrit dans un fichier txt le cover final
-    def writeTemplate(self):
-        file = open("results/test.txt",'w', encoding="utf8")
-        for elem in self.coverExport:
-            file.write(elem + '\n')
-
-        file.close()
 
     # Stocke les titre dans une liste avec leur duree
     def titleProcessing(self):
@@ -52,7 +50,7 @@ class Cover :
             elem = elem + '-' + time
             self.listMusicTitleFormat.append(elem.split('-'))
 
-
+    # Verifie la presence ou non dans le titre des données de ton et tempo
     def verification(self):
         for elem in self.listMusicTitleFormat:
             try:
@@ -74,8 +72,7 @@ class Cover :
         for elem in self.listMusicTitleFormat:
             print(elem)
 
-
-
+    # Construit le tableau avec les titres
     def buildCover(self):
         i=0
         lenTitle=24+self.titleLimit
@@ -116,7 +113,13 @@ class Cover :
 
         print(self.coverExport)
 
+    # Ecrit dans un fichier txt le cover final
+    def writeTemplate(self):
+        file = open("results/test.txt",'w', encoding="utf8")
+        for elem in self.coverExport:
+            file.write(elem + '\n')
 
+        file.close()
 
 
 #c=Cover("mp3/")
