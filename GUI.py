@@ -12,7 +12,7 @@ class Gui:
 
     def __init__(self):
 
-        self.root.title("TextCoverSongTitle v1.0")
+        self.root.title("PrintableMusicCoverGenerator v1.0")
         self.root.minsize(300, 300)
         self.root.geometry("320x100")
 
