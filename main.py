@@ -13,7 +13,7 @@ from Functions import *
 
 
 class Cover :
-
+    version=1.1
     coverTitre="CD1"
     titleLimit=50
     musicPath=""
