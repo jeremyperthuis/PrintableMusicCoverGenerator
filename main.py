@@ -82,7 +82,7 @@ class Cover :
     def buildHeader(self):
         lenTitle = 69
         f = Figlet(font='standard')
-        bigtext = str(f.renderText('HOUSE 001'))
+        bigtext = str(f.renderText(self.coverTitre))
         bigtextFrag=bigtext.split("\n")
         CdTitleCentre = floor(lenTitle / 2) - floor(len(bigtextFrag[0]) / 2)
         # gere le decalage du titre
@@ -135,7 +135,6 @@ class Cover :
         file = open("results/test.txt",'w', encoding="utf8")
         for elem in self.coverExport:
             file.write(elem + '\n')
-
         file.close()
 
 

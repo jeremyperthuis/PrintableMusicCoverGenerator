@@ -74,7 +74,16 @@ class Gui:
             songDict['duree']=song[3]
             listDict.append(dict(songDict))
 
-        i=0
+        i = 0
+        labeltitre=Label(self.Paned2,text="Title")
+        labeltitre.grid(row=i,column=0)
+        labelduree = Label(self.Paned2, text="Length")
+        labelduree.grid(row=i,column=3)
+        labelbpm = Label(self.Paned2, text="BPM")
+        labelbpm.grid(row=i,column=1)
+        labelkey=Label(self.Paned2,text="Key")
+        labelkey.grid(row=i,column=2)
+        i+=1
         for elem in listDict:
             ListeSong = []
             limit=True
@@ -87,6 +96,8 @@ class Gui:
 
             entryTitre = Entry(self.Paned2,textvariable=titre, width=60)
             if len(elem["titre"])>C.titleLimit:
+                self.labelwarning=Label(self.Paned2,text="Title too long !")
+
                 entryTitre.configure(background="red")
             entryTitre.grid(column=0)
             ListeSong.append(entryTitre)
@@ -99,15 +110,17 @@ class Gui:
             entryKey.grid(row=i, column=2)
             ListeSong.append(entryKey)
 
-            entryDuree = Entry(self.Paned2,textvariable=duree, width=8)
+            entryDuree = Entry(self.Paned2,textvariable=duree, width=8,state='disabled')
             entryDuree.grid(row=i, column=3)
             ListeSong.append(entryDuree)
 
             self.ListeSongs.append(list(ListeSong))
             i+=1
 
-        self.saveButton=Button(self.Paned2,text='Save',command=self.getEditSong)
-        self.saveButton.grid()
+        self.saveButton=Button(self.Paned2,text='Save',command=self.getEditSong,padx=5,pady=5)
+        self.saveButton.grid(row=i,column=3)
+        if len(elem["titre"]) > C.titleLimit:
+            self.labelwarning.grid(row=i,column=0)
 
 
     def getEditSong(self):
@@ -119,6 +132,11 @@ class Gui:
                 i.destroy()
             songs.append(list(song))
         self.saveButton.destroy()
+        try:
+            self.labelwarning.destroy()
+        except AttributeError:
+            pass
+
         C.listMusicTitleFormat=songs
         print(C.listMusicTitleFormat)
         self.getListe(C.listMusicTitleFormat)
@@ -127,6 +145,7 @@ class Gui:
 
     # Genere la cover
     def generate(self):
+        print("Generate")
         C.writeTemplate()
         print("generate")
         tex3=Label(self.root,text="Sucess !")
