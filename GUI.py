@@ -3,15 +3,15 @@ from tkinter import *
 import time
 from main import *
 import pprint
-
 class Gui:
+
 
     rep=""
     root = Tk()
-    root.title("PrintableMusicCoverGenerator v1.1")
+    root.title("PrintableMusicCoverGenerator v1.2")
     root.minsize(500, 400)
     root.geometry("520x400")
-    global C
+
 
     def __init__(self):
         print("init")
@@ -48,10 +48,14 @@ class Gui:
             value.set(self.rep)
             tex2 = Entry(self.Paned1, textvariable=value, width=30)
             tex2.pack()
+            global C
             C = Cover(self.rep)
             self.getListe(C.listMusicTitleFormat)
-            C.buildCover()
-            C.writeTemplate()
+            #C.buildCover()
+            #C.writeTemplate()
+
+
+
 
     ################################################
     # Affichage des Entry
@@ -61,30 +65,69 @@ class Gui:
         # On cree une liste de dictionnaire pour stocker les sons
         listDict=[]
         songDict={}
+
+        self.ListeSongs=[]
         for song in argLst:
-            songDict["titre"]=song[0]+"-"+song[1]
-            songDict["bpm"]=song[2]
-            songDict['key']=song[3]
-            songDict['duree']=song[4]
+            songDict["titre"]=song[0]
+            songDict["bpm"]=song[1]
+            songDict['key']=song[2]
+            songDict['duree']=song[3]
             listDict.append(dict(songDict))
 
         i=0
         for elem in listDict:
-            print(elem)
+            ListeSong = []
+            limit=True
             titre= StringVar(self.Paned2,value=elem['titre'])
             bpm = StringVar(self.Paned2, value=elem['bpm'])
             key = StringVar(self.Paned2, value=elem['key'])
             duree = StringVar(self.Paned2, value=elem['duree'])
 
-            entryTitre = Entry(self.Paned2,textvariable=titre, width=50).grid(column=0)
-            entryBpm = Entry(self.Paned2,textvariable=bpm,width=10).grid(row=i,column=1)
-            entryKey = Entry(self.Paned2,textvariable=key, width=10).grid(row=i, column=2)
-            entryDuree = Entry(self.Paned2,textvariable=duree, width=10).grid(row=i, column=3)
+
+
+            entryTitre = Entry(self.Paned2,textvariable=titre, width=60)
+            if len(elem["titre"])>C.titleLimit:
+                entryTitre.configure(background="red")
+            entryTitre.grid(column=0)
+            ListeSong.append(entryTitre)
+
+            entryBpm = Entry(self.Paned2,textvariable=bpm,width=8)
+            entryBpm.grid(row=i,column=1)
+            ListeSong.append(entryBpm)
+
+            entryKey = Entry(self.Paned2,textvariable=key, width=8)
+            entryKey.grid(row=i, column=2)
+            ListeSong.append(entryKey)
+
+            entryDuree = Entry(self.Paned2,textvariable=duree, width=8)
+            entryDuree.grid(row=i, column=3)
+            ListeSong.append(entryDuree)
+
+            self.ListeSongs.append(list(ListeSong))
             i+=1
+
+        self.saveButton=Button(self.Paned2,text='Save',command=self.getEditSong)
+        self.saveButton.grid()
+
+
+    def getEditSong(self):
+        songs=[]
+        for elem in self.ListeSongs:
+            song=[]
+            for i in elem:
+                song.append(i.get())
+                i.destroy()
+            songs.append(list(song))
+        self.saveButton.destroy()
+        C.listMusicTitleFormat=songs
+        print(C.listMusicTitleFormat)
+        self.getListe(C.listMusicTitleFormat)
+        C.buildCover()
 
 
     # Genere la cover
     def generate(self):
+        C.writeTemplate()
         print("generate")
         tex3=Label(self.root,text="Sucess !")
         tex3.pack(side="bottom")
