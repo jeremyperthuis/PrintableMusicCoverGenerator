@@ -15,7 +15,7 @@ from pyfiglet import Figlet
 
 class Cover :
     version=1.1
-    coverTitre="CD1"
+    coverTitre=""
     titleLimit=52
     musicPath=""
     listMusicTitle=[]
@@ -86,10 +86,10 @@ class Cover :
         bigtextFrag=bigtext.split("\n")
         CdTitleCentre = floor(lenTitle / 2) - floor(len(bigtextFrag[0]) / 2)
         # gere le decalage du titre
-        if len(self.coverTitre) % 2 == 1:
+        if len(bigtextFrag[0]) % 2 == 1:
             ecart = 0
         else:
-            ecart = -1
+            ecart = 1
         self.coverExport.append('╔' + (lenTitle) * '═' + '╗')
         for ligne in bigtextFrag:
             if len(ligne)>0:

@@ -43,13 +43,22 @@ class Gui:
 
         # La fenetre de selection de dossier apparait
         self.rep = filedialog.askdirectory(initialdir="/", title='Choisir un repertoire')+"/"
+
         if len(self.rep) > 0:
-            value=StringVar()
-            value.set(self.rep)
-            tex2 = Entry(self.Paned1, textvariable=value, width=30)
+
+            print(self.rep)
+            path=StringVar()
+            path.set(self.rep)
+            tex2 = Label(self.Paned1, textvariable=path, width=60)
             tex2.pack()
+
+            self.CDtitre=StringVar()
+            path=self.rep.split('/')
+            nomCD=path[-2]
+            self.CDtitre.set(nomCD)
             global C
             C = Cover(self.rep)
+            
             self.getListe(C.listMusicTitleFormat)
             #C.buildCover()
             #C.writeTemplate()
@@ -67,6 +76,8 @@ class Gui:
         songDict={}
 
         self.ListeSongs=[]
+
+        # Affectation dans le dictionnaire
         for song in argLst:
             songDict["titre"]=song[0]
             songDict["bpm"]=song[1]
@@ -74,6 +85,11 @@ class Gui:
             songDict['duree']=song[3]
             listDict.append(dict(songDict))
 
+        # Déclaration Entry titre CD
+        self.entryTitreCD = Entry(self.Paned1, textvariable=self.CDtitre, width=20,justify=CENTER)
+        self.entryTitreCD.pack()
+
+        # Déclaration des Labels
         i = 0
         labeltitre=Label(self.Paned2,text="Title")
         labeltitre.grid(row=i,column=0)
@@ -84,20 +100,19 @@ class Gui:
         labelkey=Label(self.Paned2,text="Key")
         labelkey.grid(row=i,column=2)
         i+=1
+
+        # Déclaration des Entry
         for elem in listDict:
             ListeSong = []
-            limit=True
             titre= StringVar(self.Paned2,value=elem['titre'])
             bpm = StringVar(self.Paned2, value=elem['bpm'])
             key = StringVar(self.Paned2, value=elem['key'])
             duree = StringVar(self.Paned2, value=elem['duree'])
 
 
-
             entryTitre = Entry(self.Paned2,textvariable=titre, width=60)
             if len(elem["titre"])>C.titleLimit:
                 self.labelwarning=Label(self.Paned2,text="Title too long !")
-
                 entryTitre.configure(background="red")
             entryTitre.grid(column=0)
             ListeSong.append(entryTitre)
@@ -117,13 +132,17 @@ class Gui:
             self.ListeSongs.append(list(ListeSong))
             i+=1
 
-        self.saveButton=Button(self.Paned2,text='Save',command=self.getEditSong,padx=5,pady=5)
+        # Déclaration du bouton 'Save'
+        self.saveButton=Button(self.Paned2, text='Save', command=self.Reload, padx=5, pady=5)
         self.saveButton.grid(row=i,column=3)
+
+        # On fait aparaitre le warning si le titre est trop long
         if len(elem["titre"]) > C.titleLimit:
             self.labelwarning.grid(row=i,column=0)
 
 
-    def getEditSong(self):
+    def Reload(self):
+        # Supression des Entry
         songs=[]
         for elem in self.ListeSongs:
             song=[]
@@ -131,12 +150,20 @@ class Gui:
                 song.append(i.get())
                 i.destroy()
             songs.append(list(song))
+        # Suppression du bouton save
         self.saveButton.destroy()
+        # Supression du label "titre trop long"
         try:
             self.labelwarning.destroy()
         except AttributeError:
             pass
+        # Suppression de l'entry titre du CD
+        try:
+            self.entryTitreCD.destroy()
+        except AttributeError:
+            pass
 
+        C.coverTitre=self.CDtitre.get()
         C.listMusicTitleFormat=songs
         print(C.listMusicTitleFormat)
         self.getListe(C.listMusicTitleFormat)
