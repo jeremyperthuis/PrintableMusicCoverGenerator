@@ -53,10 +53,9 @@ class Cover :
 
     # Verifie la presence ou non dans le titre des données de ton et tempo
     def verification(self):
-        print("TEST")
         for elem in self.listMusicTitleFormat:
             try:
-                print(elem[3])
+                a=elem[3]
             except IndexError:
                 temp=elem[2]
                 elem.pop(2)
@@ -64,7 +63,7 @@ class Cover :
                 elem.append(temp)
 
             try:
-                print(elem[4])
+                b=elem[4]
             except IndexError:
                 temp = elem[3]
                 elem.pop(3)
@@ -77,7 +76,7 @@ class Cover :
             elem.pop(1)
             elem[1]=removeEndSpace(elem[1])
             elem[2]=removeEndSpace((elem[2]))
-            print(elem)
+            #print(elem)
 
     def buildHeader(self):
         lenTitle = 69
