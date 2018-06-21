@@ -1,0 +1,6 @@
+#!C:\Users\jpu\Documents\dev\python\TextCoverSongTitle\venv\Scripts\python.exe
+
+from cx_Freeze import main
+
+main()
+
