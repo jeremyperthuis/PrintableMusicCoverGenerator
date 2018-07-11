@@ -7,46 +7,54 @@
 
 import os
 from math import *
-from mutagen.mp3 import MP3
+import mutagen
 import datetime
 from Functions import *
 from pyfiglet import Figlet
+from pprint import pprint
 
 
 class Cover :
-    version=1.1
+
+    version=1.2
+    pathMusicDirectory = ""
     coverTitre=""
     titleLimit=52
-    musicPath=""
     listMusicTitle=[]
     listMusicTitleFormat=[]
     templateDetails=[]
     coverExport=[]
 
     def __init__(self,path):
-        self.musicPath=path
+
+        self.pathMusicDirectory=path
 
         self.ScanFolder()
         self.titleProcessing()
         self.verification()
         self.formatListeMusic(self.listMusicTitleFormat)
-        #self.buildCover()
-        #self.writeTemplate()
+        self.buildCover()
+        self.writeTemplate()
 
 
-    # Stocke les titres dans l'ordre alaphabetique dans une liste
+    # Stocke les titres dans l'ordre alaphabetique dans listMusicTitle
     def ScanFolder(self):
-        liste = os.listdir(self.musicPath)
-        for elem in liste:
-            self.listMusicTitle.append(elem)
+        self.listMusicTitle.clear()
+        for file in os.listdir(self.pathMusicDirectory):
+            try:
+                mutagen.File(self.pathMusicDirectory+"\\"+file)
+                if ".mp3" in file:
+                    self.listMusicTitle.append(file)
+                else:
+                    print("WARNING ! {0} n'est pas un fichier mp3".format(file))
+            except mutagen.MutagenError:
+                print("WARNING ! {0} n'est pas un fichier compatible".format(file))
 
-    # Stocke les titre dans une liste avec leur duree
+    # Stocke les titre avec leur durée dans listMusicTitleFormat
     def titleProcessing(self):
-
+        self.listMusicTitleFormat.clear()
         for elem in self.listMusicTitle:
-            audio = MP3(self.musicPath+str(elem))
-            time=str(datetime.timedelta(seconds=audio.info.length))[2:7]
-
+            time=str(datetime.timedelta(seconds=mutagen.mp3.MP3(self.pathMusicDirectory +"\\"+str(elem)).info.length))[2:7]
             elem = elem.replace('.mp3','')
             elem = elem + '-' + time
             self.listMusicTitleFormat.append(elem.split('-'))
@@ -59,7 +67,7 @@ class Cover :
             except IndexError:
                 temp=elem[2]
                 elem.pop(2)
-                elem.append("xxx")
+                elem.append("___")
                 elem.append(temp)
 
             try:
@@ -67,23 +75,25 @@ class Cover :
             except IndexError:
                 temp = elem[3]
                 elem.pop(3)
-                elem.append("xxx")
+                elem.append("___")
                 elem.append(temp)
 
+    # Retire les espaces blanc pour chaque champs titre, tempo, clé
     def formatListeMusic(self,arg):
         for elem in arg:
             elem[0]=removeEndSpace(elem[0])+' - '+removeEndSpace(elem[1])
             elem.pop(1)
             elem[1]=removeEndSpace(elem[1])
             elem[2]=removeEndSpace((elem[2]))
-            #print(elem)
 
+    # Construit le Header titre du tableau imprimable dans coverExport
     def buildHeader(self):
         lenTitle = 69
         f = Figlet(font='standard')
         bigtext = str(f.renderText(self.coverTitre))
         bigtextFrag=bigtext.split("\n")
         CdTitleCentre = floor(lenTitle / 2) - floor(len(bigtextFrag[0]) / 2)
+
         # gere le decalage du titre
         if len(bigtextFrag[0]) % 2 == 1:
             ecart = 0
@@ -94,7 +104,6 @@ class Cover :
             if len(ligne)>0:
                 self.coverExport.append('║' + (CdTitleCentre) * ' ' + ligne + (CdTitleCentre + ecart) * ' ' + '║')
         self.coverExport.append("╠══╦" + (self.titleLimit) * '═' + '╦═════╦═══╦═══╣')
-
 
     # Construit le tableau avec les titres
     def buildCover(self):
@@ -124,18 +133,14 @@ class Cover :
             if i>=len(self.listMusicTitleFormat):
                 self.coverExport.append('╚══╩' + (self.titleLimit)*'═' + '╩═════╩═══╩═══╝')
 
-
-
-
-        print(self.coverExport)
-
-    # Ecrit dans un fichier txt le cover final
+    # Ecrit dans un fichier txt le cover final dans le dossier d'origine
     def writeTemplate(self):
-        file = open("results/test.txt",'w', encoding="utf8")
+        file = open(self.pathMusicDirectory+"\\tracklist.txt",'w', encoding="utf8")
         for elem in self.coverExport:
             file.write(elem + '\n')
         file.close()
 
 
-#c=Cover("mp3/")
-#print(c.listMusicTitleFormat)
+c=Cover("C:\\Users\jpu\Desktop\CD6")
+print(c.pathMusicDirectory)
+pprint(c.coverExport)
