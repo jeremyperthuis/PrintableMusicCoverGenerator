@@ -5,14 +5,13 @@ from main import *
 import pprint
 class Gui:
 
-
     rep=""
     root = Tk()
-    root.title("PrintableMusicCoverGenerator v1.2")
+    root.title("PrintableMusicCoverGenerator v1.3")
     root.minsize(500, 400)
     root.geometry("520x400")
     ListeSongs=[]
-    count=0
+
 
     def __init__(self):
         print("init()")
@@ -32,9 +31,9 @@ class Gui:
         # Boutons Exit & Generate
         btnExit = Button(self.root, text='Exit', command=self.root.destroy)
         btnExit.pack(side="left",anchor="s",padx=5, pady=5)
-
         btnGenerate = Button(self.root, text='Generate', command=self.generate)
         btnGenerate.pack(side="right",anchor="s",padx=5,pady=5)
+
         self.root.mainloop()
 
     ################################################
@@ -42,13 +41,22 @@ class Gui:
     ################################################
     def choixdir(self):
         print("choixdir()")
+        self.DeleteLabelPathCD()
+        self.DeleteEntryCDTitle()
+        self.DeleteLabelSongs()
+        self.DeleteEntrySongs()
+        try:
+            self.labelwarning.destroy()
+            self.saveButton.destroy()
+        except AttributeError:
+            pass
+
+
         # La fenetre de selection de dossier apparait
         self.rep = filedialog.askdirectory(initialdir="/", title='Choisir un repertoire')+"/"
 
         if len(self.rep) > 0:
             try:
-                #print(self.rep)
-
                 self.path=StringVar()
                 self.path.set(self.rep)
 
@@ -56,49 +64,47 @@ class Gui:
 
                 self.CDtitre=StringVar()
                 self.CDtitre.set(self.rep.split('/')[-2])
+
                 self.C = Cover(self.rep)
-                if self.count >0:
-                    self.C.__init__()
-                self.count += 1
+
                 self.getListe()
-
-
                 try :
                     print(len(self.C.listMusicTitleFormat))
                 except:
                     pass
-
-
             except HeaderNotFoundError:
                 print("pas de son !")
 
-    ################################################
+
+
     # Affichage du label du path CD
-    ################################################
     def DisplayLabelPathCD(self):
         print(" -> DisplayLabelPathCD()")
-        try:
-            self.labelPathCD.destroy()
-
-
-        except AttributeError:
-            pass
-
         self.labelPathCD = Label(self.Paned1, textvariable=self.path, width=60)
         self.labelPathCD.pack()
 
-    ################################################
-    # Affichage des Labels "title", "length", "key", "bpm"
-    ################################################
-    def DisplayLabelSongs(self):
-        print(" -> DisplayLabelSongs()")
+    def DeleteLabelPathCD(self):
         try:
-            self.labeltitre.destroy()
-            self.labelbpm.destroy()
-            self.labelduree.destroy()
-            self.labelkey.destroy()
+            self.labelPathCD.destroy()
         except AttributeError:
             pass
+
+    # Affichage de l'entry du titre du CD
+    def DisplayEntryCdTitle(self):
+        print(" -> DisplayEntryCDTitle()")
+        self.entryTitreCD = Entry(self.Paned1, textvariable=self.CDtitre, width=20,justify=CENTER)
+        self.entryTitreCD.pack()
+        self.ListeSongs=[]
+
+    def DeleteEntryCDTitle(self):
+        try:
+            self.entryTitreCD.destroy()
+        except AttributeError:
+            pass
+
+    # Affichage des Labels "title", "length", "key", "bpm"
+    def DisplayLabelSongs(self):
+        print(" -> DisplayLabelSongs()")
 
         # Déclaration des Labels
         i = 0
@@ -111,24 +117,19 @@ class Gui:
         self.labelkey=Label(self.Paned2,text="Key")
         self.labelkey.grid(row=i,column=2)
 
-    ###############################################
-    # Affichage de l'entry du titre du CD
-    ################################################
-    def DisplayEntryCdTitle(self):
-        print(" -> DisplayEntryCDTitle()")
+    def DeleteLabelSongs(self):
         try:
-            self.entryTitreCD.destroy()
+            self.labeltitre.destroy()
+            self.labelbpm.destroy()
+            self.labelduree.destroy()
+            self.labelkey.destroy()
         except AttributeError:
             pass
-        self.entryTitreCD = Entry(self.Paned1, textvariable=self.CDtitre, width=20,justify=CENTER)
-        self.entryTitreCD.pack()
-        self.ListeSongs=[]
-    ###############################################
-    # Affichage des Entry de sons
-    ################################################
+
+    # Affichage des Entry de sons (arg : listMusicTitleFormat)
     def DisplayEntrySongs(self,argLst):
         print(" -> DisplayEntrySongs()")
-        # On cree une liste de dictionnaire pour stocker les sons
+        # On cree une liste de dictionnaire pour stocker les sonsf
         listDict = []
         songDict = {}
 
@@ -189,27 +190,29 @@ class Gui:
         if len(elem["titre"]) > self.C.titleLimit:
             self.labelwarning.grid(row=i, column=0)
 
+    # Suppression des Entry de sons
+    def DeleteEntrySongs(self):
+        print("DeleteEntrySongs()")
+        for sons in self.ListeSongs:
+            for a in sons:
+                print(a.get())
+                print(a.destroy())
 
-    ################################################
-    # Affichage
-    ################################################
+        print(len(self.ListeSongs))
+
     def getListe(self):
         print("getListe()")
-
         self.DisplayEntryCdTitle()
         self.DisplayLabelSongs()
         self.DisplayEntrySongs(self.C.listMusicTitleFormat)
 
-
-    ################################################
     # Enregistre les valeurs des Entry
-    ################################################
     def Save(self):
         print("Save()")
         # On récupere la Titre du CD
         self.C.coverTitre=self.CDtitre.get()
 
-        # On recupere titres de son fraichement edités
+        # On recupere les titres des tracks fraichement edités
         songs=[]
         for elem in self.ListeSongs:
             song=[]
@@ -232,19 +235,8 @@ class Gui:
         except AttributeError:
             pass
 
-
         self.getListe()
         self.C.buildCover()
-
-    def DeleteEntrySongs(self):
-        print("DeleteEntrySongs()")
-        for sons in self.ListeSongs:
-            for a in sons:
-                print(a.get())
-                print(a.destroy())
-
-        print(len(self.ListeSongs))
-
 
     # Genere la cover
     def generate(self):
