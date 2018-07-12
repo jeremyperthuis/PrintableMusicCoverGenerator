@@ -209,8 +209,11 @@ class Gui:
     # Enregistre les valeurs des Entry
     def Save(self):
         print("Save()")
-        # On récupere la Titre du CD
+        # On récupere le Titre du CD
+        print("avant : {0}".format(self.C.coverTitre))
         self.C.coverTitre=self.CDtitre.get()
+        print("apres : {0}".format(self.C.coverTitre))
+
 
         # On recupere les titres des tracks fraichement edités
         songs=[]
@@ -230,20 +233,21 @@ class Gui:
         except AttributeError:
             pass
         # Suppression de l'entry titre du CD
-        try:
-            self.entryTitreCD.destroy()
-        except AttributeError:
-            pass
-
+        self.DeleteEntryCDTitle()
+        self.C.listMusicTitleFormat = songs
         self.getListe()
         self.C.buildCover()
 
     # Genere la cover
     def generate(self):
+        try:
+            self.labelSucess.destroy()
+        except AttributeError:
+            pass
         print("Generate()")
         self.C.writeTemplate()
-        tex3=Label(self.root,text="Sucess !")
-        tex3.pack(side="bottom")
+        self.labelSucess=Label(self.root,text="Sucess !")
+        self.labelSucess.pack(side="bottom")
 
 
 g=Gui()
