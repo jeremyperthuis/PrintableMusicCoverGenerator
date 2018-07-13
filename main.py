@@ -1,5 +1,5 @@
 '''
-    PrintableMusicCoverGenerator v1.3
+    PrintableMusicCoverGenerator v1.4
 
     Perthuis Jeremy
 '''
@@ -20,10 +20,13 @@ class Cover :
     pathMusicDirectory = ""
     coverTitre=""
     titleLimit=52
+    listFont = ["straight", "stop", "starwars", "standard", "small", "roman", "puffy", "doom", "big"]
+    usedFont="standard"
     listMusicTitle=[]
     listMusicTitleFormat=[]
     templateDetails=[]
     coverExport=[]
+
 
     def __init__(self,path):
 
@@ -95,9 +98,10 @@ class Cover :
 
     # Construit le Header titre du tableau imprimable dans coverExport
     def buildHeader(self):
+
         print(" buildHeader()")
         lenTitle = 69
-        f = Figlet(font='standard')
+        f = Figlet(font=self.usedFont)
         bigtext = str(f.renderText(self.coverTitre))
         bigtextFrag=bigtext.split("\n")
         CdTitleCentre = floor(lenTitle / 2) - floor(len(bigtextFrag[0]) / 2)

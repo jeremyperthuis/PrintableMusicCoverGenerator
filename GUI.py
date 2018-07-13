@@ -7,7 +7,7 @@ class Gui:
 
     rep=""
     root = Tk()
-    root.title("PrintableMusicCoverGenerator v1.3")
+    root.title("PrintableMusicCoverGenerator v1.4")
     root.minsize(500, 400)
     root.geometry("520x400")
     ListeSongs=[]
@@ -59,13 +59,13 @@ class Gui:
             try:
                 self.path=StringVar()
                 self.path.set(self.rep)
-
                 self.DisplayLabelPathCD()
 
                 self.CDtitre=StringVar()
                 self.CDtitre.set(self.rep.split('/')[-2])
 
                 self.C = Cover(self.rep)
+                self.DisplayListBoxFont()
 
                 self.getListe()
                 try :
@@ -200,6 +200,23 @@ class Gui:
 
         print(len(self.ListeSongs))
 
+    # Affichage de la listBox de selection de fonte
+    def DisplayListBoxFont(self):
+        print(" -> DisplayListBoxFont()")
+
+        self.varFont = StringVar(self.Paned2)
+        self.varFont.set("standard")
+
+        self.spinBoxFont=OptionMenu(self.Paned1,self.varFont,*self.C.listFont)
+        self.spinBoxFont.pack()
+
+    # Suppression de la listBox de selection de fonte
+    def DeleteListBoxFont(self):
+        try:
+            self.listBoxFont.destroy()
+        except AttributeError:
+            pass
+
     def getListe(self):
         print("getListe()")
         self.DisplayEntryCdTitle()
@@ -209,11 +226,11 @@ class Gui:
     # Enregistre les valeurs des Entry
     def Save(self):
         print("Save()")
-        # On récupere le Titre du CD
-        print("avant : {0}".format(self.C.coverTitre))
-        self.C.coverTitre=self.CDtitre.get()
-        print("apres : {0}".format(self.C.coverTitre))
+        # On recupere la fonte choisie (defaut : standard)
+        self.C.usedFont = self.varFont.get()
 
+        # On récupere le Titre du CD
+        self.C.coverTitre=self.CDtitre.get()
 
         # On recupere les titres des tracks fraichement edités
         songs=[]
