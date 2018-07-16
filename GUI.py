@@ -2,7 +2,7 @@ from tkinter import filedialog
 from tkinter import *
 from mutagen.mp3 import HeaderNotFoundError
 from main import *
-import pprint
+
 class Gui:
 
     rep=""
