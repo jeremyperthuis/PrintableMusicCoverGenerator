@@ -41,13 +41,14 @@ class Gui:
     ################################################
     def choixdir(self):
         print("choixdir()")
-        self.DeleteLabelPathCD()
-        self.DeleteEntryCDTitle()
-        self.DeleteLabelSongs()
-        self.DeleteEntrySongs()
         try:
-            self.labelwarning.destroy()
+            self.DeleteListBoxFont()
+            self.DeleteLabelPathCD()
+            self.DeleteEntryCDTitle()
             self.saveButton.destroy()
+            self.DeleteLabelSongs()
+            self.DeleteEntrySongs()
+            self.labelwarning.destroy()
         except AttributeError:
             pass
 
@@ -213,7 +214,7 @@ class Gui:
     # Suppression de la listBox de selection de fonte
     def DeleteListBoxFont(self):
         try:
-            self.listBoxFont.destroy()
+            self.spinBoxFont.destroy()
         except AttributeError:
             pass
 
