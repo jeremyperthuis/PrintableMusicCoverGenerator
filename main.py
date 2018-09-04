@@ -4,7 +4,6 @@
     Perthuis Jeremy
 '''
 
-
 import os
 from math import *
 import mutagen
@@ -26,6 +25,7 @@ class Cover :
     listMusicTitleFormat=[]
     templateDetails=[]
     coverExport=[]
+
 
 
     def __init__(self,path):
