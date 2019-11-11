@@ -70,10 +70,10 @@ class Gui:
                 self.DisplayListBoxFont()
 
                 self.getListe()
-                try :
-                    print(len(self.C.listMusicTitleFormat))
-                except:
-                    pass
+                # try :
+                #     print(len(self.C.listMusicTitleFormat))
+                # except:
+                #     pass
             except HeaderNotFoundError:
                 print("pas de son !")
 
@@ -136,8 +136,8 @@ class Gui:
         songDict = {}
 
         self.ListeSongs.clear()
-        print("ListeSongs {0}: {1}".format(len(self.ListeSongs),self.ListeSongs))
-        print("ArgLst {0}: {1}".format(len(argLst),argLst))
+        # print("ListeSongs {0}: {1}".format(len(self.ListeSongs),self.ListeSongs))
+        # print("ArgLst {0}: {1}".format(len(argLst),argLst))
 
         # Affectation dans le dictionnaire
         for song in argLst:
@@ -180,8 +180,8 @@ class Gui:
             self.ListeSongs.append(list(ListeSong))
             i += 1
 
-        print("ListeSongs {0}: {1}".format(len(self.ListeSongs), self.ListeSongs))
-        print("ArgLst {0}: {1}".format(len(argLst), argLst))
+        # print("ListeSongs {0}: {1}".format(len(self.ListeSongs), self.ListeSongs))
+        # print("ArgLst {0}: {1}".format(len(argLst), argLst))
 
 
         # Déclaration du bouton 'Save'
@@ -200,7 +200,7 @@ class Gui:
                 print(a.get())
                 print(a.destroy())
 
-        print(len(self.ListeSongs))
+        # print(len(self.ListeSongs))
 
     # Affichage de la listBox de selection de fonte
     def DisplayListBoxFont(self):

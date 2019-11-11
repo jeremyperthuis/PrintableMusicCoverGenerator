@@ -62,7 +62,9 @@ class Cover :
             time=str(datetime.timedelta(seconds=mutagen.mp3.MP3(self.pathMusicDirectory +"\\"+str(elem)).info.length))[2:7]
             elem = elem.replace('.mp3','')
             elem = elem + '-' + time
-            self.listMusicTitleFormat.append(elem.split('-'))
+            print(elem)
+            self.listMusicTitleFormat.append(analyzeHyphen(elem))
+            print(elem)
         print("     ok")
 
     # Verifie la presence ou non dans le titre des données de ton et tempo
