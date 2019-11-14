@@ -43,31 +43,31 @@ class Gui:
     def choixdir(self):
         print("choixdir()")
         try:
-            self.DeleteListBoxFont()
-            self.DeleteLabelPathCD()
-            self.DeleteEntryCDTitle()
+            self.deleteListBoxFont()
+            self.deleteLabelPathCD()
+            self.deleteEntryCDTitle()
             self.saveButton.destroy()
-            self.DeleteLabelSongs()
-            self.DeleteEntrySongs()
+            self.deleteLabelSongs()
+            self.deleteEntrySongs()
             self.labelwarning.destroy()
         except AttributeError:
             pass
 
 
         # La fenetre de selection de dossier apparait
-        self.rep = filedialog.askdirectory(initialdir=GetLastPath(), title='Choisir un repertoire')+"/"
+        self.rep = filedialog.askdirectory(initialdir=getLastPath(), title='Choisir un repertoire') + "/"
 
         if len(self.rep) > 0:
             try:
                 self.path=StringVar()
                 self.path.set(self.rep)
-                self.DisplayLabelPathCD()
+                self.displayLabelPathCD()
 
                 self.CDtitre=StringVar()
                 self.CDtitre.set(self.rep.split('/')[-2])
 
                 self.C = Cover(self.rep)
-                self.DisplayListBoxFont()
+                self.displayListBoxFont()
 
                 self.getListe()
 
@@ -77,32 +77,32 @@ class Gui:
 
 
     # Affichage du label du path CD
-    def DisplayLabelPathCD(self):
+    def displayLabelPathCD(self):
         print(" -> DisplayLabelPathCD()")
         self.labelPathCD = Label(self.Paned1, textvariable=self.path, width=60)
         self.labelPathCD.pack()
 
-    def DeleteLabelPathCD(self):
+    def deleteLabelPathCD(self):
         try:
             self.labelPathCD.destroy()
         except AttributeError:
             pass
 
     # Affichage de l'entry du titre du CD
-    def DisplayEntryCdTitle(self):
+    def displayEntryCdTitle(self):
         print(" -> DisplayEntryCDTitle()")
         self.entryTitreCD = Entry(self.Paned1, textvariable=self.CDtitre, width=20,justify=CENTER)
         self.entryTitreCD.pack()
         self.ListeSongs=[]
 
-    def DeleteEntryCDTitle(self):
+    def deleteEntryCDTitle(self):
         try:
             self.entryTitreCD.destroy()
         except AttributeError:
             pass
 
     # Affichage des Labels "title", "length", "key", "bpm"
-    def DisplayLabelSongs(self):
+    def displayLabelSongs(self):
         print(" -> DisplayLabelSongs()")
 
         # Déclaration des Labels
@@ -116,7 +116,7 @@ class Gui:
         self.labelkey=Label(self.Paned2,text="Key")
         self.labelkey.grid(row=i,column=2)
 
-    def DeleteLabelSongs(self):
+    def deleteLabelSongs(self):
         try:
             self.labeltitre.destroy()
             self.labelbpm.destroy()
@@ -126,7 +126,7 @@ class Gui:
             pass
 
     # Affichage des Entry de sons (arg : listMusicTitleFormat)
-    def DisplayEntrySongs(self,argLst):
+    def displayEntrySongs(self, argLst):
         print(" -> DisplayEntrySongs()")
         # On cree une liste de dictionnaire pour stocker les sonsf
         listDict = []
@@ -182,7 +182,7 @@ class Gui:
 
 
         # Déclaration du bouton 'Save'
-        self.saveButton = Button(self.Paned2, text='Save', command=self.Save, padx=5, pady=5)
+        self.saveButton = Button(self.Paned2, text='Save', command=self.save, padx=5, pady=5)
         self.saveButton.grid(row=i, column=3)
 
         # On fait aparaitre le warning si le titre est trop long
@@ -190,7 +190,7 @@ class Gui:
             self.labelwarning.grid(row=i, column=0)
 
     # Suppression des Entry de sons
-    def DeleteEntrySongs(self):
+    def deleteEntrySongs(self):
         print("DeleteEntrySongs()")
         for sons in self.ListeSongs:
             for a in sons:
@@ -200,7 +200,7 @@ class Gui:
         # print(len(self.ListeSongs))
 
     # Affichage de la listBox de selection de fonte
-    def DisplayListBoxFont(self):
+    def displayListBoxFont(self):
         print(" -> DisplayListBoxFont()")
 
         self.varFont = StringVar(self.Paned2)
@@ -210,7 +210,7 @@ class Gui:
         self.spinBoxFont.pack()
 
     # Suppression de la listBox de selection de fonte
-    def DeleteListBoxFont(self):
+    def deleteListBoxFont(self):
         try:
             self.spinBoxFont.destroy()
         except AttributeError:
@@ -218,12 +218,12 @@ class Gui:
 
     def getListe(self):
         print("getListe()")
-        self.DisplayEntryCdTitle()
-        self.DisplayLabelSongs()
-        self.DisplayEntrySongs(self.C.listMusicTitleFormat)
+        self.displayEntryCdTitle()
+        self.displayLabelSongs()
+        self.displayEntrySongs(self.C.listMusicTitleFormat)
 
     # Enregistre les valeurs des Entry
-    def Save(self):
+    def save(self):
         print("Save()")
         # On recupere la fonte choisie (defaut : standard)
         self.C.usedFont = self.varFont.get()
@@ -239,7 +239,7 @@ class Gui:
                 song.append(i.get())
             songs.append(list(song))
 
-        self.DeleteEntrySongs()
+        self.deleteEntrySongs()
 
         # Suppression du bouton save
         self.saveButton.destroy()
@@ -249,7 +249,7 @@ class Gui:
         except AttributeError:
             pass
         # Suppression de l'entry titre du CD
-        self.DeleteEntryCDTitle()
+        self.deleteEntryCDTitle()
         self.C.listMusicTitleFormat = songs
         self.getListe()
         self.C.buildCover()

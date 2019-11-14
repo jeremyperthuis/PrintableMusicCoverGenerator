@@ -30,11 +30,11 @@ def analyzeHyphen(chaine):
         return("NULL")
 
 # Save in a txt file the last path
-def WriteLastPath(path):
+def writeLastPath(path):
     file = open("savePath.txt",'w', encoding="utf8")
     file.write(path)
 
-def GetLastPath():
+def getLastPath():
     file=open("savePath.txt",'r', encoding="utf8")
     if(file.read() == ""):
         return("\\")

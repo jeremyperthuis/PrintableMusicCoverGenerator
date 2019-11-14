@@ -18,7 +18,7 @@ def analyzeHyphenTest():
 
 def lastPathTest():
     #WriteLastPath("F:\\Users\\Jeremy\\OneDrive\\In Da Hood\\PLAYLISTS")
-    print(GetLastPath())
+    print(getLastPath())
 
 
 lastPathTest()
