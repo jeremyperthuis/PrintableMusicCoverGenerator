@@ -1,4 +1,4 @@
-# TextCoverSongTitle 1.4
+# TextCoverSongTitle 1.5
 ![License MIT](https://img.shields.io/cocoapods/l/AFNetworking.svg)
 
 TextCoverSongTitle s'adresse à tout les mecs bloqué à l'ère du CompactDisc et souffrant de trouble obsessionnel.
