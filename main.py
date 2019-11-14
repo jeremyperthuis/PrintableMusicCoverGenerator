@@ -1,5 +1,5 @@
 '''
-    PrintableMusicCoverGenerator v1.4
+    PrintableMusicCoverGenerator v1.5
 
     Perthuis Jeremy
 '''

@@ -1,5 +1,6 @@
 
 from tkinter import filedialog
+from tkinter import messagebox
 from tkinter import *
 from mutagen.mp3 import HeaderNotFoundError
 from main import *
@@ -35,6 +36,7 @@ class Gui:
         btnGenerate = Button(self.root, text='Generate', command=self.generate)
         btnGenerate.pack(side="right",anchor="s",padx=5,pady=5)
 
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.root.mainloop()
 
     ################################################
@@ -264,6 +266,12 @@ class Gui:
         self.C.writeTemplate()
         self.labelSucess=Label(self.root,text="Sucess !")
         self.labelSucess.pack(side="bottom")
+
+    def on_closing(self):
+
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            self.root.destroy()
+
 
 
 g=Gui()
