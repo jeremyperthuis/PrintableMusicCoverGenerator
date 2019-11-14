@@ -1,0 +1,24 @@
+from Functions import *
+
+def analyzeHyphenTest():
+    regexKey = "^[\s]*[\d]{1,2}[A-B,a-b]{1}[\s]*$"
+    regexTempo = "^[\s]*[\d]{1,3}[\s]*$"
+    regexLength = "^[\s]*[\d]{1,3}[:][\d]{1,2}[\s]*$"
+
+    str1 = "Gatekeeper - Forgotten - 8A - 120-03:58"
+    str2 = "Jean-Luc - Le Sabbat - 10A - 84-07:01"
+    print(analyzeHyphen(str1))
+    if re.match(regexKey, analyzeHyphen(str1)[2]):
+        print("str1 key successful !")
+    if re.match(regexTempo, analyzeHyphen(str1)[3]):
+        print("str1 tempo succeful !")
+    if re.match(regexLength, analyzeHyphen(str1)[4]):
+        print("str1 length succeful !")
+    print(analyzeHyphen(str2))
+
+def lastPathTest():
+    #WriteLastPath("F:\\Users\\Jeremy\\OneDrive\\In Da Hood\\PLAYLISTS")
+    print(GetLastPath())
+
+
+lastPathTest()

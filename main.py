@@ -31,7 +31,7 @@ class Cover :
     def __init__(self,path):
 
         self.pathMusicDirectory=path
-
+        WriteLastPath(path)
         self.ScanFolder()
         self.titleProcessing()
         self.verification()

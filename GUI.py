@@ -55,7 +55,7 @@ class Gui:
 
 
         # La fenetre de selection de dossier apparait
-        self.rep = filedialog.askdirectory(initialdir="/", title='Choisir un repertoire')+"/"
+        self.rep = filedialog.askdirectory(initialdir=GetLastPath(), title='Choisir un repertoire')+"/"
 
         if len(self.rep) > 0:
             try:
@@ -70,12 +70,9 @@ class Gui:
                 self.DisplayListBoxFont()
 
                 self.getListe()
-                # try :
-                #     print(len(self.C.listMusicTitleFormat))
-                # except:
-                #     pass
+
             except HeaderNotFoundError:
-                print("pas de son !")
+                print("Aucun fichier .mp3 trouvé !")
 
 
 
