@@ -23,6 +23,7 @@ def splitRawTitle(chaine):
     if hyphen_nbr == 1 :
         data["artist"] = removeEndpointSpace(title_split[0])
         data["title"] = removeEndpointSpace(title_split[1])
+        data["display_title"] = data["artist"] +" - "+ data["title"]
         data["key"] = ""
         data["tempo"] = ""
         return data
@@ -31,6 +32,7 @@ def splitRawTitle(chaine):
     elif hyphen_nbr == 3:
         data["artist"] = removeEndpointSpace(title_split[0])
         data["title"] = removeEndpointSpace(title_split[1])
+        data["display_title"] = data["artist"] + " - " + data["title"]
 
         if re.match(regexKey,title_split[2]):
             data["key"] = removeEndpointSpace(title_split[2])
@@ -49,6 +51,7 @@ def splitRawTitle(chaine):
         if re.match(regexTempo,title_split[-1]) and re.match(regexKey, title_split[-2]):
             data["artist"] = removeEndpointSpace("{0}-{1}".format(title_split[0],title_split[1]))
             data["title"] = removeEndpointSpace(title_split[2])
+            data["display_title"] = data["artist"] + " - " + data["title"]
             data["key"] = removeEndpointSpace(title_split[3])
             data["tempo"] = removeEndpointSpace(title_split[4])
             return data
@@ -56,7 +59,7 @@ def splitRawTitle(chaine):
             return("erreur")
     else :
         print("Error split chaine  : {0}".format(chaine))
-        return {"artist":"none","title":"none","key":"none","tempo":"none"}
+        return {"artist":"none","title":"none","display_title":"none","key":"none","tempo":"none"}
 
 # Save in a txt file the last path
 def writeLastPath(path):

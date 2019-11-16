@@ -3,16 +3,16 @@ from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import *
 from mutagen.mp3 import HeaderNotFoundError
-from Mp3Processing import *
+from BuildCover import *
 import logging
 
 class Interface:
 
     rep=""
     root = Tk()
-    root.title("PrintableMusicCoverGenerator v1.4")
-    root.minsize(500, 400)
-    root.geometry("520x400")
+    root.title("PrintableMusicCoverGenerator v1.5")
+    root.minsize(600, 500)
+    root.geometry("600x500")
     ListeSongs=[]
     logging.basicConfig(format='%(asctime)s  %(levelname)s : %(funcName)s  %(message)s')
     logger = logging.getLogger()
@@ -43,17 +43,15 @@ class Interface:
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.root.mainloop()
 
-    ################################################
-    # Fonction 'Choose directory'
-    ################################################
+    # Bouton choisir un dossier
     def choixdir(self):
         logging.info("start")
         try:
             self.deleteListBoxFont()
             self.deleteLabelPathCD()
-            self.deleteEntryCDTitle()
+            self.deleteDisplayCDName()
             self.saveButton.destroy()
-            self.deleteLabelSongs()
+            self.deleteDisplayMp3Labels()
             self.deleteEntrySongs()
             self.labelwarning.destroy()
         except AttributeError:
@@ -65,17 +63,24 @@ class Interface:
 
         if len(self.rep) > 0:
             try:
+                # Affichage du label du path complet
                 self.path=StringVar()
                 self.path.set(self.rep)
                 self.displayLabelPathCD()
 
-                self.CDtitre=StringVar()
-                self.CDtitre.set(self.rep.split('/')[-2])
-
+                # declaration des objets
                 self.C = Mp3Processing(self.rep)
+                self.B = BuildCover(self.C)
+
+                # Affichage du nom du CD
+                self.CDtitre = StringVar()
+                self.CDtitre.set(self.C.getDefautCDName())
+                self.displayCDName()
+
+                # Afiichage de la liste des fontes disponibles
                 self.displayListBoxFont()
 
-                self.getListe()
+                self.displayMp3Labels()
 
             except HeaderNotFoundError:
                 print("Aucun fichier .mp3 trouvé !")
@@ -94,14 +99,14 @@ class Interface:
         except AttributeError:
             pass
 
-    # Affichage de l'entry du titre du CD
-    def displayEntryCdTitle(self):
+    # Affichage du nom du CD
+    def displayCDName(self):
         logging.info("start")
         self.entryTitreCD = Entry(self.Paned1, textvariable=self.CDtitre, width=20,justify=CENTER)
         self.entryTitreCD.pack()
         self.ListeSongs=[]
 
-    def deleteEntryCDTitle(self):
+    def deleteDisplayCDName(self):
         logging.info("start")
         try:
             self.entryTitreCD.destroy()
@@ -109,7 +114,7 @@ class Interface:
             pass
 
     # Affichage des Labels "title", "length", "key", "bpm"
-    def displayLabelSongs(self):
+    def displayMp3Labels(self):
         logging.info("start")
 
         # Déclaration des Labels
@@ -118,12 +123,12 @@ class Interface:
         self.labeltitre.grid(row=i,column=0)
         self.labelduree = Label(self.Paned2, text="Length")
         self.labelduree.grid(row=i,column=3)
-        self.labelbpm = Label(self.Paned2, text="BPM")
+        self.labelbpm = Label(self.Paned2, text="Key")
         self.labelbpm.grid(row=i,column=1)
-        self.labelkey=Label(self.Paned2,text="Key")
+        self.labelkey=Label(self.Paned2,text="Tempo")
         self.labelkey.grid(row=i,column=2)
 
-    def deleteLabelSongs(self):
+    def deleteDisplayMp3Labels(self):
         logging.info("start")
         try:
             self.labeltitre.destroy()
@@ -134,37 +139,20 @@ class Interface:
             pass
 
     # Affichage des Entry de sons (arg : listMusicTitleFormat)
-    def displayEntrySongs(self, argLst):
+    def displayEntrySongs(self, mp3_dict):
         logging.info("start")
-        # On cree une liste de dictionnaire pour stocker les sonsf
-        listDict = []
-        songDict = {}
-
-        self.ListeSongs.clear()
-        # print("ListeSongs {0}: {1}".format(len(self.ListeSongs),self.ListeSongs))
-        # print("ArgLst {0}: {1}".format(len(argLst),argLst))
-
-        # Affectation dans le dictionnaire
-        for song in argLst:
-            songDict["titre"] = song[0]
-            songDict["bpm"] = song[1]
-            songDict['key'] = song[2]
-            songDict['duree'] = song[3]
-            listDict.append(dict(songDict))
-
-        i = 1
-
-        # Déclaration des Entry
-
-        for elem in listDict:
+        print(mp3_dict)
+        i=0
+        for key, value in mp3_dict.items():
             ListeSong = []
-            titre = StringVar(self.Paned2, value=elem['titre'])
-            bpm = StringVar(self.Paned2, value=elem['bpm'])
-            key = StringVar(self.Paned2, value=elem['key'])
-            duree = StringVar(self.Paned2, value=elem['duree'])
+            titre = StringVar(self.Paned2, value=value['display_title'])
+            bpm = StringVar(self.Paned2, value=value['tempo'])
+            key = StringVar(self.Paned2, value=value['key'])
+            duree = StringVar(self.Paned2, value=value['length'])
 
             entryTitre = Entry(self.Paned2, textvariable=titre, width=60)
-            if len(elem["titre"]) > self.C.title_limit:
+
+            if len(value["display_title"]) > self.B.title_limit:
                 self.labelwarning = Label(self.Paned2, text="Title too long !")
                 entryTitre.configure(background="red")
             entryTitre.grid(column=0)
@@ -193,9 +181,9 @@ class Interface:
         self.saveButton = Button(self.Paned2, text='Save', command=self.save, padx=5, pady=5)
         self.saveButton.grid(row=i, column=3)
 
-        # On fait aparaitre le warning si le titre est trop long
-        if len(elem["titre"]) > self.C.title_limit:
-            self.labelwarning.grid(row=i, column=0)
+        # # On fait aparaitre le warning si le titre est trop long
+        # if len(elem["titre"]) > self.B.title_limit:
+        #     self.labelwarning.grid(row=i, column=0)
 
     # Suppression des Entry de sons
     def deleteEntrySongs(self):
@@ -214,7 +202,7 @@ class Interface:
         self.varFont = StringVar(self.Paned2)
         self.varFont.set("standard")
 
-        self.spinBoxFont=OptionMenu(self.Paned1, self.varFont, *self.C.list_font)
+        self.spinBoxFont=OptionMenu(self.Paned1, self.varFont, self.B.list_font)
         self.spinBoxFont.pack()
 
     # Suppression de la listBox de selection de fonte
@@ -225,11 +213,10 @@ class Interface:
         except AttributeError:
             pass
 
-    def getListe(self):
+    def displayGridView(self):
         logging.info("start")
-        self.displayEntryCdTitle()
-        self.displayLabelSongs()
-        self.displayEntrySongs(self.C.list_music_title_format)
+
+        self.displayEntrySongs(self.C.list_mp3)
 
     # Enregistre les valeurs des Entry
     def save(self):
@@ -258,9 +245,9 @@ class Interface:
         except AttributeError:
             pass
         # Suppression de l'entry titre du CD
-        self.deleteEntryCDTitle()
+        self.deleteDisplayCDName()
         self.C.list_music_title_format = songs
-        self.getListe()
+        self.displayGridView()
         self.C.buildCover()
 
     # Genere la cover

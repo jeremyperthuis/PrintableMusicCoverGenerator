@@ -70,6 +70,7 @@ class Mp3Processing:
             value["title"] = datas_dict["title"]
             value["key"] = datas_dict["key"]
             value["tempo"] = datas_dict["tempo"]
+            value["display_title"] = datas_dict["display_title"]
 
 if __name__ == '__main__':
     M=Mp3Processing("F:\\Users\\Jeremy\\Developpement\\PrintableMusicCoverGenerator\\testCD")
