@@ -3,31 +3,60 @@ import re
 
 # Retire les espaces blanc aux extremites d'une chaine de caractere
 #   '  les pains ' -> 'les pains'
-def removeEndSpace(chaine):
+def removeEndpointSpace(chaine):
     if chaine[-1:] == ' ':
-        return removeEndSpace(chaine[:-1])
+        return removeEndpointSpace(chaine[:-1])
     elif chaine[:1] == ' ':
-        return removeEndSpace(chaine[1:])
+        return removeEndpointSpace(chaine[1:])
     else:
         return chaine
 
 
-def analyzeHyphen(chaine):
+def splitRawTitle(chaine):
+
     regexKey = "^[\s]*[\d]{1,2}[A-B,a-b]{1}[\s]*$"
     regexTempo = "^[\s]*[\d]{1,3}[\s]*$"
-    regexLength = "^[\s]*[\d]{1,3}[:][\d]{1,2}[\s]*$"
+    hyphen_nbr = chaine.count('-')
+    data=dict()
+    title_split = chaine.split('-')
+    # Cas sans tempo ni clé "artiste - titre"
+    if hyphen_nbr == 1 :
+        data["artist"] = removeEndpointSpace(title_split[0])
+        data["title"] = removeEndpointSpace(title_split[1])
+        data["key"] = ""
+        data["tempo"] = ""
+        return data
 
-    if chaine.count('-') == 4 :
-        return chaine.split('-')
-    elif chaine.count('-') == 5:
-        temp = chaine.split('-')
-        if re.match(regexLength,temp[-1]) and re.match(regexTempo,temp[-2]) and re.match(regexKey, temp[-3]):
-            return([temp[0]+"-"+temp[1],temp[2],temp[3],temp[4],temp[5]])
+    # Cas normal -> "artiste - titre - key - tempo
+    elif hyphen_nbr == 3:
+        data["artist"] = removeEndpointSpace(title_split[0])
+        data["title"] = removeEndpointSpace(title_split[1])
+
+        if re.match(regexKey,title_split[2]):
+            data["key"] = removeEndpointSpace(title_split[2])
+        else:
+            data["key"] = ""
+
+        if re.match(regexTempo, title_split[3]):
+            data["tempo"] = removeEndpointSpace(title_split[3])
+        else:
+            data["tempo"] = ""
+
+        return data
+
+    # Cas "-" dans artiste -> "artiste-artiste - titre - key - tempo
+    elif hyphen_nbr == 4:
+        if re.match(regexTempo,title_split[-1]) and re.match(regexKey, title_split[-2]):
+            data["artist"] = removeEndpointSpace("{0}-{1}".format(title_split[0],title_split[1]))
+            data["title"] = removeEndpointSpace(title_split[2])
+            data["key"] = removeEndpointSpace(title_split[3])
+            data["tempo"] = removeEndpointSpace(title_split[4])
+            return data
         else:
             return("erreur")
     else :
         print("Error split chaine  : {0}".format(chaine))
-        return("NULL")
+        return {"artist":"none","title":"none","key":"none","tempo":"none"}
 
 # Save in a txt file the last path
 def writeLastPath(path):

@@ -21,6 +21,7 @@ class Mp3Processing:
     default_font = "standard"
     list_music_title = []
     list_music_title_format = []
+    list_mp3 = dict()
     template_details = []
     cover_export = []
     logging.basicConfig(format='%(asctime)s  %(levelname)s : %(funcName)s  %(message)s')
@@ -32,9 +33,10 @@ class Mp3Processing:
         self.music_folder_path = path
         writeLastPath(path)
         self.scanFolder()
-        self.titleProcessing()
-        self.verification()
-        self.formatListeMusic(self.list_music_title_format)
+        self.addlength()
+        self.addTitleArtist()
+        # self.verification()
+        # self.formatListeMusic(self.list_music_title_format)
 
     # Stocke les titres dans l'ordre alphabetique dans listMusicTitle
     def scanFolder(self):
@@ -44,59 +46,33 @@ class Mp3Processing:
             try:
                 mutagen.File(self.music_folder_path + "\\" + file)
                 if isMP3(file):
-                    print(file)
-                    self.list_music_title.append(file)
+                    self.list_mp3[file] = dict()
                 else:
                     logging.warning("  {0} n'est pas un fichier .mp3".format(file))
             except mutagen.MutagenError:
                 logging.warning(" {0} n'est pas un fichier compatible".format(file))
-        logging.info("end : {0} fichiers .mp3 traité(s)".format(len(self.list_music_title)))
+        logging.info("end : {0} fichiers .mp3 traité(s)".format(len(self.list_mp3)))
 
-    # Stocke les titre avec leur durée dans listMusicTitleFormat
-    def titleProcessing(self):
+    # Stocke les durée dans list_mp3
+    def addlength(self):
         logging.info("start")
-        self.list_music_title_format.clear()
-        for elem in self.list_music_title:
-            time = str(
+        for elem in self.list_mp3:
+            self.list_mp3[elem]["length"] = str(
                 datetime.timedelta(seconds=mutagen.mp3.MP3(self.music_folder_path + "\\" + str(elem)).info.length))[
                    2:7]
-            elem = elem.replace('.mp3', '')
-            elem = elem + '-' + time
-            print(elem)
-            self.list_music_title_format.append(analyzeHyphen(elem))
-            print(elem)
-        logging.info("end : {0} traité(s)".format(len(self.list_music_title)))
+        logging.info("end")
 
-    # Verifie la presence ou non dans le titre des données de ton et tempo
-    def verification(self):
+    # Stocke les titres, artistes, clés et tempo dans list_mp3
+    def addTitleArtist(self):
         logging.info("start")
-        for elem in self.list_music_title_format:
-            try:
-                a = elem[3]
-            except IndexError:
-                temp = elem[2]
-                elem.pop(2)
-                elem.append("___")
-                elem.append(temp)
 
-            try:
-                b = elem[4]
-            except IndexError:
-                temp = elem[3]
-                elem.pop(3)
-                elem.append("___")
-                elem.append(temp)
-
-
-    # Retire les espaces blanc pour chaque champs titre, tempo, clé
-    def formatListeMusic(self, arg):
-        logging.info("start")
-        for elem in arg:
-            elem[0] = removeEndSpace(elem[0]) + ' - ' + removeEndSpace(elem[1])
-            elem.pop(1)
-            elem[1] = removeEndSpace(elem[1])
-            elem[2] = removeEndSpace((elem[2]))
-
+        for key,value in self.list_mp3.items():
+            value["raw_title"]=key.replace(".mp3","")
+            datas_dict = splitRawTitle(value["raw_title"])
+            value["artist"]=datas_dict["artist"]
+            value["title"] = datas_dict["title"]
+            value["key"] = datas_dict["key"]
+            value["tempo"] = datas_dict["tempo"]
 
     # Construit le Header titre du tableau imprimable dans coverExport
     def buildHeader(self):
@@ -157,3 +133,5 @@ class Mp3Processing:
         file.close()
         print("     ok")
 
+if __name__ == '__main__':
+    M=Mp3Processing("F:\\Users\\Jeremy\\Developpement\\PrintableMusicCoverGenerator\\testCD")
