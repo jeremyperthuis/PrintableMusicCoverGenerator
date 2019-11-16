@@ -1,7 +1,7 @@
 # TextCoverSongTitle 1.5
 ![License MIT](https://img.shields.io/cocoapods/l/AFNetworking.svg)
 
-TextCoverSongTitle s'adresse à tout les mecs bloqué à l'ère du CompactDisc et souffrant de trouble obsessionnel.
+TextCoverSongTitle s'adresse à tout les mecs bloqué à l'ère du CompactDisc.
 Il permet de faciliter  l'organisation de ses CD ~~illégalements~~ gravés en générant des pochettes contenant le numéro des pistes avec artistes et titres ainsi que
 certaines metadonnées utiles comme le tempo ou la tonalité (utile pour les discs-jockeys).
 
@@ -9,7 +9,7 @@ certaines metadonnées utiles comme le tempo ou la tonalité (utile pour les dis
 * Windows 7, 8 , 10
 * Python 3.5
 
-#### ormatage des titres
+#### Formatage des titres
 Les titres doivent être de la forme "artiste - titre - clé - tempo"
 les informations de clé et de tempo sont optionnelles et peuvent être concaténées au titre automatiquement avec un programme tel
 que [Mixed in Key](https://mixedinkey.com/).

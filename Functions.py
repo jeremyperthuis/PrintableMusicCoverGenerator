@@ -40,3 +40,10 @@ def getLastPath():
         return("\\")
     else:
         return(file.read())
+
+def isMP3(file):
+    regex_mp3 = "^.*\.mp3$"
+    if re.match(regex_mp3,file):
+        return True
+    else:
+        return False

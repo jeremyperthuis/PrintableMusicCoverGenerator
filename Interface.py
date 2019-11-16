@@ -3,9 +3,10 @@ from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import *
 from mutagen.mp3 import HeaderNotFoundError
-from main import *
+from Mp3Processing import *
+import logging
 
-class Gui:
+class Interface:
 
     rep=""
     root = Tk()
@@ -13,14 +14,17 @@ class Gui:
     root.minsize(500, 400)
     root.geometry("520x400")
     ListeSongs=[]
+    logging.basicConfig(format='%(asctime)s  %(levelname)s : %(funcName)s  %(message)s')
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
 
 
     def __init__(self):
-        print("init()")
+        logging.info("start")
         self.setup()
 
     def setup(self):
-        print("setup()")
+        logging.info("start")
 
         # Panel Choix Dossier & Liste Mp3
         self.Paned1=PanedWindow(self.root, orient=HORIZONTAL)
@@ -43,7 +47,7 @@ class Gui:
     # Fonction 'Choose directory'
     ################################################
     def choixdir(self):
-        print("choixdir()")
+        logging.info("start")
         try:
             self.deleteListBoxFont()
             self.deleteLabelPathCD()
@@ -68,7 +72,7 @@ class Gui:
                 self.CDtitre=StringVar()
                 self.CDtitre.set(self.rep.split('/')[-2])
 
-                self.C = Cover(self.rep)
+                self.C = Mp3Processing(self.rep)
                 self.displayListBoxFont()
 
                 self.getListe()
@@ -80,7 +84,7 @@ class Gui:
 
     # Affichage du label du path CD
     def displayLabelPathCD(self):
-        print(" -> DisplayLabelPathCD()")
+        logging.info("start")
         self.labelPathCD = Label(self.Paned1, textvariable=self.path, width=60)
         self.labelPathCD.pack()
 
@@ -92,12 +96,13 @@ class Gui:
 
     # Affichage de l'entry du titre du CD
     def displayEntryCdTitle(self):
-        print(" -> DisplayEntryCDTitle()")
+        logging.info("start")
         self.entryTitreCD = Entry(self.Paned1, textvariable=self.CDtitre, width=20,justify=CENTER)
         self.entryTitreCD.pack()
         self.ListeSongs=[]
 
     def deleteEntryCDTitle(self):
+        logging.info("start")
         try:
             self.entryTitreCD.destroy()
         except AttributeError:
@@ -105,7 +110,7 @@ class Gui:
 
     # Affichage des Labels "title", "length", "key", "bpm"
     def displayLabelSongs(self):
-        print(" -> DisplayLabelSongs()")
+        logging.info("start")
 
         # Déclaration des Labels
         i = 0
@@ -119,6 +124,7 @@ class Gui:
         self.labelkey.grid(row=i,column=2)
 
     def deleteLabelSongs(self):
+        logging.info("start")
         try:
             self.labeltitre.destroy()
             self.labelbpm.destroy()
@@ -129,7 +135,7 @@ class Gui:
 
     # Affichage des Entry de sons (arg : listMusicTitleFormat)
     def displayEntrySongs(self, argLst):
-        print(" -> DisplayEntrySongs()")
+        logging.info("start")
         # On cree une liste de dictionnaire pour stocker les sonsf
         listDict = []
         songDict = {}
@@ -158,7 +164,7 @@ class Gui:
             duree = StringVar(self.Paned2, value=elem['duree'])
 
             entryTitre = Entry(self.Paned2, textvariable=titre, width=60)
-            if len(elem["titre"]) > self.C.titleLimit:
+            if len(elem["titre"]) > self.C.title_limit:
                 self.labelwarning = Label(self.Paned2, text="Title too long !")
                 entryTitre.configure(background="red")
             entryTitre.grid(column=0)
@@ -188,12 +194,12 @@ class Gui:
         self.saveButton.grid(row=i, column=3)
 
         # On fait aparaitre le warning si le titre est trop long
-        if len(elem["titre"]) > self.C.titleLimit:
+        if len(elem["titre"]) > self.C.title_limit:
             self.labelwarning.grid(row=i, column=0)
 
     # Suppression des Entry de sons
     def deleteEntrySongs(self):
-        print("DeleteEntrySongs()")
+        logging.info("start")
         for sons in self.ListeSongs:
             for a in sons:
                 print(a.get())
@@ -203,35 +209,36 @@ class Gui:
 
     # Affichage de la listBox de selection de fonte
     def displayListBoxFont(self):
-        print(" -> DisplayListBoxFont()")
+        logging.info("start")
 
         self.varFont = StringVar(self.Paned2)
         self.varFont.set("standard")
 
-        self.spinBoxFont=OptionMenu(self.Paned1,self.varFont,*self.C.listFont)
+        self.spinBoxFont=OptionMenu(self.Paned1, self.varFont, *self.C.list_font)
         self.spinBoxFont.pack()
 
     # Suppression de la listBox de selection de fonte
     def deleteListBoxFont(self):
+        logging.info("start")
         try:
             self.spinBoxFont.destroy()
         except AttributeError:
             pass
 
     def getListe(self):
-        print("getListe()")
+        logging.info("start")
         self.displayEntryCdTitle()
         self.displayLabelSongs()
-        self.displayEntrySongs(self.C.listMusicTitleFormat)
+        self.displayEntrySongs(self.C.list_music_title_format)
 
     # Enregistre les valeurs des Entry
     def save(self):
-        print("Save()")
+        logging.info("start")
         # On recupere la fonte choisie (defaut : standard)
-        self.C.usedFont = self.varFont.get()
+        self.C.default_font = self.varFont.get()
 
         # On récupere le Titre du CD
-        self.C.coverTitre=self.CDtitre.get()
+        self.C.cover_titre=self.CDtitre.get()
 
         # On recupere les titres des tracks fraichement edités
         songs=[]
@@ -252,12 +259,13 @@ class Gui:
             pass
         # Suppression de l'entry titre du CD
         self.deleteEntryCDTitle()
-        self.C.listMusicTitleFormat = songs
+        self.C.list_music_title_format = songs
         self.getListe()
         self.C.buildCover()
 
     # Genere la cover
     def generate(self):
+        logging.info("start")
         try:
             self.labelSucess.destroy()
         except AttributeError:
@@ -268,10 +276,10 @@ class Gui:
         self.labelSucess.pack(side="bottom")
 
     def on_closing(self):
-
+        logging.info("start")
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
             self.root.destroy()
 
 
 
-g=Gui()
+g=Interface()
