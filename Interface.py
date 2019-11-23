@@ -20,7 +20,7 @@ class Interface:
     def __init__(self):
         self.initLogging()
         self.initConfigParser()
-        self.root.title("PrintableMusicCoverGenerator v1.6")
+        self.root.title("Cover CD v1.6")
         self.root.minsize(600, 500)
         self.root.config(background=self.config["color"]["rootBackground"])
         self.setup()
@@ -127,7 +127,7 @@ class Interface:
         logging.info("start")
         self.CDtitre = StringVar()
         self.CDtitre.set(nameCD)
-        self.entryTitreCD = Entry(self.main_pane, textvariable=self.CDtitre, width=20, justify=CENTER,bg=self.config["color"]["paneBackground"])
+        self.entryTitreCD = Entry(self.main_pane, textvariable=self.CDtitre, width=20, justify=CENTER,bg=self.config["color"]["paneBackground"],relief="solid")
         self.entryTitreCD.pack()
         self.edited_list_songs=[]
 
@@ -175,24 +175,22 @@ class Interface:
             duree = StringVar(self.Paned2, value=value['length'])
 
             # Affichage des titres
-            entryTitre = Entry(self.Paned2, textvariable=titre, width=60,bg=self.config["color"]["paneBackground"])
-
+            entryTitre = Entry(self.Paned2, textvariable=titre, width=60,bg=self.config["color"]["paneBackground"],relief="solid")
             if len(value["display_title"]) > self.B.title_limit:
                 self.labelwarning = Label(self.Paned2, text="Title too long !", fg=self.config['color']['labelWarningColor'],bg=self.config["color"]["paneBackground"])
                 entryTitre.configure(background="indianred1")
             entryTitre.grid(row=i, column=0)
             temp.append(entryTitre)
 
-            entryDuree = Entry(self.Paned2, textvariable=duree, width=8, state='disabled',bg=self.config["color"]["paneBackground"])
+            entryDuree = Entry(self.Paned2, textvariable=duree, width=8, state='disabled',disabledbackground=self.config["color"]["paneBackground"],disabledforeground ="black",relief="solid")
             entryDuree.grid(row=i, column=1)
             temp.append(entryDuree)
 
-            entryKey = Entry(self.Paned2, textvariable=key, width=8,bg=self.config["color"]["paneBackground"])
+            entryKey = Entry(self.Paned2, textvariable=key, width=8,bg=self.config["color"]["paneBackground"],relief="solid")
             entryKey.grid(row=i, column=2)
             temp.append(entryKey)
 
-
-            entryBpm = Entry(self.Paned2, textvariable=bpm, width=8,bg=self.config["color"]["paneBackground"])
+            entryBpm = Entry(self.Paned2, textvariable=bpm, width=8,bg=self.config["color"]["paneBackground"],relief="solid")
             entryBpm.grid(row=i, column=3)
             temp.append(entryBpm)
 
@@ -202,9 +200,8 @@ class Interface:
         self.labelwarning.grid(row=i, column=0)
 
         # Déclaration du bouton 'Save'
-        self.saveButton = Button(self.Paned2, text='Save', command=self.save, padx=5, pady=5,bg=self.config["color"]["paneBackground"])
+        self.saveButton = Button(self.Paned2, text='Save', command=self.save, padx=5, pady=5,bg=self.config["color"]["paneBackground"],relief="solid")
         self.saveButton.grid(row=i, column=3)
-
 
     def deleteSongsList(self):
         logging.info("start")
@@ -220,7 +217,14 @@ class Interface:
         self.varFont = StringVar(self.Paned2)
         self.varFont.set(self.B.default_font)
         self.spinBoxFont = OptionMenu(self.main_pane, self.varFont, *self.B.list_font)
-        self.spinBoxFont.config(bg=self.config["color"]["paneBackground"])
+        self.spinBoxFont.config(bg=self.config["color"]["paneBackground"],
+                                activebackground=self.config["color"]["paneBackground"],
+                                padx=1,
+                                pady=1,
+                                relief="solid",
+                                highlightthickness=0,
+                                highlightcolor=self.config["border"]["scrollableList"],
+                                borderwidth=1)
         self.spinBoxFont.pack()
 
     def deleteFontScrollableList(self):
@@ -280,7 +284,7 @@ class Interface:
             pass
 
         self.B.writeTemplate()
-        self.labelSucess=Label(self.root,text="Sucess !")
+        self.labelSucess=Label(self.root,text="Tracklist générée", bg=self.config["label"]["generateBackground"])
         self.labelSucess.pack(side="bottom")
 
     def on_closing(self):
