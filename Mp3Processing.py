@@ -24,7 +24,7 @@ class Mp3Processing:
 
     def __init__(self, path):
 
-        self.music_folder_path = path
+        self.music_folder_path = os.path.abspath(path) if os.path.isdir(path) else "null"
         writeLastPath(path)
         self.scanFolder()
         self.addlength()
@@ -35,7 +35,7 @@ class Mp3Processing:
         logging.info("start")
         for file in os.listdir(self.music_folder_path):
             try:
-                mutagen.File(self.music_folder_path + "\\" + file)
+                mutagen.File(os.path.join(self.music_folder_path, file))
                 if isMP3(file):
                     self.list_mp3[file] = dict()
                 else:
@@ -47,7 +47,7 @@ class Mp3Processing:
     # ajoute le noeud terminal du path (Nom pas défaut du CD)
     def getDefautCDName(self):
         logging.info("start")
-        return self.music_folder_path.split("\\")[-1]
+        return os.path.basename(self.music_folder_path)
 
 
     # Stocke les durée dans list_mp3
@@ -55,7 +55,7 @@ class Mp3Processing:
         logging.info("start")
         for elem in self.list_mp3:
             self.list_mp3[elem]["length"] = str(
-                datetime.timedelta(seconds=mutagen.mp3.MP3(self.music_folder_path + "\\" + str(elem)).info.length))[
+                datetime.timedelta(seconds=mutagen.mp3.MP3(os.path.join(self.music_folder_path, str(elem))).info.length))[
                    2:7]
         logging.info("end")
 

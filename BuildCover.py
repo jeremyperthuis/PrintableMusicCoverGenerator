@@ -13,16 +13,16 @@ class BuildCover:
     logging.basicConfig(format='%(asctime)s  %(levelname)s : %(funcName)s  %(message)s')
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
-
+    defaut_CD_title = ""
 
     def __init__(self, mp3Processing):
         self.defaut_CD_title = mp3Processing.getDefautCDName()
         self.complete_path = mp3Processing.music_folder_path
         self.mp3_dict = mp3Processing.list_mp3
-        self.buildHeader()
-        self.buildCover()
-        self.displayCover()
-        self.writeTemplate()
+        # self.buildHeader()
+        # self.buildCover()
+        # self.displayCover()
+        # self.writeTemplate()
 
     # Construit le Header titre du tableau imprimable dans coverExport
     def buildHeader(self):
@@ -78,7 +78,7 @@ class BuildCover:
     # Ecrit dans un fichier txt le cover final dans le dossier d'origine
     def writeTemplate(self):
         logging.info("start")
-        file = open(self.complete_path + "\\tracklist.txt", 'w', encoding="utf8")
+        file = open(os.path.join(self.complete_path,"tracklist.txt"), 'w', encoding="utf8")
         for elem in self.cover_export:
             file.write(elem + '\n')
         file.close()
@@ -88,3 +88,7 @@ class BuildCover:
 if __name__ == '__main__':
     M = Mp3Processing("F:\\Users\\Jeremy\\Developpement\\PrintableMusicCoverGenerator\\testCD")
     B = BuildCover(M)
+    B.buildHeader()
+    B.buildCover()
+    B.displayCover()
+    B.writeTemplate()
