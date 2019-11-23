@@ -101,7 +101,7 @@ class Interface:
                 print("Aucun fichier .mp3 trouvé !")
 
     def displaySplashTitle(self):
-        f = Figlet(font="standard")
+        f = Figlet(font=self.B.default_font)
         text = str(f.renderText(self.B.defaut_CD_title))
         self.splash_title = Label(self.main_pane, text=text,font="{Lucida Console} 12",justify=LEFT, bg= self.config["color"]["paneBackground"])
         self.splash_title.pack()
@@ -234,7 +234,7 @@ class Interface:
     def save(self):
         logging.info("start")
         # On recupere la fonte choisie (defaut : standard)
-        self.C.default_font = self.varFont.get()
+        self.B.default_font = self.varFont.get()
         # On récupere le Titre du CD
         self.B.defaut_CD_title = self.CDtitre.get()
 
