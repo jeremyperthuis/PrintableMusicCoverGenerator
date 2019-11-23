@@ -216,11 +216,12 @@ class Interface:
 
 
         for elem in self.edited_list_songs:
-            self.B.mp3_dict[elem[0]]["display_title_edited"] = str(elem[1].get())
-            self.B.mp3_dict[elem[0]]["tempo_edited"] = str(elem[2].get())
-            self.B.mp3_dict[elem[0]]["key_edited"] = str(elem[3].get())
-            self.B.mp3_dict[elem[0]]["length_edited"] = str(elem[4].get())
+            self.B.mp3_dict[elem[0]]["display_title"] = str(elem[1].get())
+            self.B.mp3_dict[elem[0]]["length"] = str(elem[2].get())
+            self.B.mp3_dict[elem[0]]["key"] = str(elem[3].get())
+            self.B.mp3_dict[elem[0]]["tempo"] = str(elem[4].get())
 
+        print(self.B.mp3_dict)
         try:
             self.saveButton.destroy()
             self.labelwarning.destroy()
@@ -232,7 +233,15 @@ class Interface:
         self.deletePathFolder()
         self.deleteSongsLabels()
         self.deleteSongsList()
-        self.B.buildCover()
+        self.deleteFontScrollableList()
+
+        self.B.buildListSongs()
+
+        self.displayPathFolder()
+        self.displayNameFolder()
+        self.displayFontScrollableList()
+        self.displaySongsLabels()
+        self.displaySongsList(self.B.mp3_dict)
 
     # Genere la cover
     def generate(self):

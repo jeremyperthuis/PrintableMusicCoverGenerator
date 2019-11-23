@@ -19,10 +19,6 @@ class BuildCover:
         self.defaut_CD_title = mp3Processing.getDefautCDName()
         self.complete_path = mp3Processing.music_folder_path
         self.mp3_dict = mp3Processing.list_mp3
-        # self.buildHeader()
-        # self.buildCover()
-        # self.displayCover()
-        # self.writeTemplate()
 
     # Construit le Header titre du tableau imprimable dans coverExport
     def buildHeader(self):
@@ -48,7 +44,7 @@ class BuildCover:
         for line in self.cover_export:
             print(line)
     # Construit le tableau avec les titres
-    def buildCover(self):
+    def buildListSongs(self):
         logging.info("start")
         self.cover_export = []
         self.buildHeader()
@@ -63,7 +59,7 @@ class BuildCover:
 
             self.cover_export.append('║{0}║{1}║{2}║{3}║{4}║'.format(
                 arg0(i),
-                value["artist"] + ' - '+ value["title"] + (self.title_limit - len(value["artist"] + ' - '+ value["title"])) * ' ',
+                value["display_title"] + (self.title_limit - len(value["display_title"])) * ' ',
                 value["length"],
                 arg34(value["key"]),
                 arg34(value["tempo"])))
@@ -89,6 +85,6 @@ if __name__ == '__main__':
     M = Mp3Processing("F:\\Users\\Jeremy\\Developpement\\PrintableMusicCoverGenerator\\testCD")
     B = BuildCover(M)
     B.buildHeader()
-    B.buildCover()
+    B.buildListSongs()
     B.displayCover()
     B.writeTemplate()
