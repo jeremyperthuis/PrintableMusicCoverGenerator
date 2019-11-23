@@ -5,35 +5,44 @@ from tkinter import *
 from mutagen.mp3 import HeaderNotFoundError
 from BuildCover import *
 import logging
-import copy
+import configparser
+from pyfiglet import Figlet
+
+import tkinter.font
 
 class Interface:
 
-    rep=""
     root = Tk()
-    root.title("PrintableMusicCoverGenerator v1.5")
-    root.minsize(600, 500)
-    root.geometry("600x500")
+    rep=""
     edited_list_songs=[]
-    logging.basicConfig(format='%(asctime)s  %(levelname)s : %(funcName)s  %(message)s')
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-
+    config = configparser.ConfigParser()
 
     def __init__(self):
-        logging.info("start")
+        self.initLogging()
+        self.initConfigParser()
+        self.root.title("PrintableMusicCoverGenerator v1.6")
+        self.root.minsize(600, 500)
+        self.root.config(background=self.config["color"]["rootBackground"])
         self.setup()
+
+    def initLogging(self):
+        logging.basicConfig(format='%(asctime)s  %(levelname)s : %(funcName)s  %(message)s')
+        logger = logging.getLogger()
+        logger.setLevel(logging.INFO)
+
+    def initConfigParser(self):
+        self.config.read("theme.ini")
 
     def setup(self):
         logging.info("start")
-
         self.displayMenuBar()
 
         # Panel Choix Dossier & Liste Mp3
-        self.main_pane = PanedWindow(self.root, orient=HORIZONTAL, borderwidth=4, bd=15)
-        self.main_pane.pack(side=TOP, padx=5, pady=5)
+        self.main_pane = PanedWindow(self.root, orient=HORIZONTAL,
+                                                bg=self.config["color"]["paneBackground"])
+        self.main_pane.pack(side=TOP)
 
-        self.Paned2=PanedWindow(self.root, orient=HORIZONTAL)
+        self.Paned2=PanedWindow(self.root, orient=HORIZONTAL,bg=self.config["color"]["paneBackground"])
         self.Paned2.pack()
 
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -73,24 +82,39 @@ class Interface:
                 # Affichage du label du path complet
                 self.path=StringVar()
                 self.path.set(self.rep)
-                self.displayPathFolder()
 
                 # declaration des objets
                 self.C = Mp3Processing(self.format_path)
                 self.B = BuildCover(self.C)
 
+                self.displaySplashTitle()
+                self.displayPathFolder()
+
+
                 self.menu_fichier.entryconfig(1, state="active")
 
-                self.displayNameFolder()
+                self.displayNameFolder(self.C.getDefautCDName())
                 self.displayFontScrollableList()
                 self.displaySongsLabels()
                 self.displaySongsList(self.C.list_mp3)
             except HeaderNotFoundError:
                 print("Aucun fichier .mp3 trouvé !")
 
+    def displaySplashTitle(self):
+        f = Figlet(font="standard")
+        text = str(f.renderText(self.B.defaut_CD_title))
+        self.splash_title = Label(self.main_pane, text=text,font="{Lucida Console} 12",justify=LEFT, bg= self.config["color"]["paneBackground"])
+        self.splash_title.pack()
+
+    def deleteSplashTitle(self):
+        try:
+            self.splash_title.destroy()
+        except AttributeError:
+            pass
+
     def displayPathFolder(self):
         logging.info("start")
-        self.labelPathCD = Label(self.main_pane, textvariable=self.path, width=60)
+        self.labelPathCD = Label(self.main_pane, textvariable=self.path, width=60,bg=self.config["color"]["paneBackground"])
         self.labelPathCD.pack()
 
     def deletePathFolder(self):
@@ -99,11 +123,11 @@ class Interface:
         except AttributeError:
             pass
 
-    def displayNameFolder(self):
+    def displayNameFolder(self,nameCD):
         logging.info("start")
         self.CDtitre = StringVar()
-        self.CDtitre.set(self.C.getDefautCDName())
-        self.entryTitreCD = Entry(self.main_pane, textvariable=self.CDtitre, width=20, justify=CENTER)
+        self.CDtitre.set(nameCD)
+        self.entryTitreCD = Entry(self.main_pane, textvariable=self.CDtitre, width=20, justify=CENTER,bg=self.config["color"]["paneBackground"])
         self.entryTitreCD.pack()
         self.edited_list_songs=[]
 
@@ -118,13 +142,13 @@ class Interface:
         logging.info("start")
         # Déclaration des Labels
         i = 0
-        self.labeltitre=Label(self.Paned2,text="Title")
+        self.labeltitre=Label(self.Paned2,text="Title",bg=self.config["color"]["paneBackground"])
         self.labeltitre.grid(row=i,column=0)
-        self.labelduree = Label(self.Paned2, text="Length")
+        self.labelduree = Label(self.Paned2, text="Length",bg=self.config["color"]["paneBackground"])
         self.labelduree.grid(row=i,column=1)
-        self.labelbpm = Label(self.Paned2, text="Key")
+        self.labelbpm = Label(self.Paned2, text="Key",bg=self.config["color"]["paneBackground"])
         self.labelbpm.grid(row=i,column=2)
-        self.labelkey=Label(self.Paned2,text="Tempo")
+        self.labelkey=Label(self.Paned2,text="Tempo",bg=self.config["color"]["paneBackground"])
         self.labelkey.grid(row=i,column=3)
 
     def deleteSongsLabels(self):
@@ -151,24 +175,24 @@ class Interface:
             duree = StringVar(self.Paned2, value=value['length'])
 
             # Affichage des titres
-            entryTitre = Entry(self.Paned2, textvariable=titre, width=60)
+            entryTitre = Entry(self.Paned2, textvariable=titre, width=60,bg=self.config["color"]["paneBackground"])
 
             if len(value["display_title"]) > self.B.title_limit:
-                self.labelwarning = Label(self.Paned2, text="Title too long !", fg="indianred1")
+                self.labelwarning = Label(self.Paned2, text="Title too long !", fg=self.config['color']['labelWarningColor'],bg=self.config["color"]["paneBackground"])
                 entryTitre.configure(background="indianred1")
             entryTitre.grid(row=i, column=0)
             temp.append(entryTitre)
 
-            entryDuree = Entry(self.Paned2, textvariable=duree, width=8, state='disabled')
+            entryDuree = Entry(self.Paned2, textvariable=duree, width=8, state='disabled',bg=self.config["color"]["paneBackground"])
             entryDuree.grid(row=i, column=1)
             temp.append(entryDuree)
 
-            entryKey = Entry(self.Paned2, textvariable=key, width=8)
+            entryKey = Entry(self.Paned2, textvariable=key, width=8,bg=self.config["color"]["paneBackground"])
             entryKey.grid(row=i, column=2)
             temp.append(entryKey)
 
 
-            entryBpm = Entry(self.Paned2, textvariable=bpm, width=8)
+            entryBpm = Entry(self.Paned2, textvariable=bpm, width=8,bg=self.config["color"]["paneBackground"])
             entryBpm.grid(row=i, column=3)
             temp.append(entryBpm)
 
@@ -178,7 +202,7 @@ class Interface:
         self.labelwarning.grid(row=i, column=0)
 
         # Déclaration du bouton 'Save'
-        self.saveButton = Button(self.Paned2, text='Save', command=self.save, padx=5, pady=5)
+        self.saveButton = Button(self.Paned2, text='Save', command=self.save, padx=5, pady=5,bg=self.config["color"]["paneBackground"])
         self.saveButton.grid(row=i, column=3)
 
 
@@ -195,8 +219,8 @@ class Interface:
         logging.info("start")
         self.varFont = StringVar(self.Paned2)
         self.varFont.set(self.B.default_font)
-        print(self.B.list_font)
         self.spinBoxFont = OptionMenu(self.main_pane, self.varFont, *self.B.list_font)
+        self.spinBoxFont.config(bg=self.config["color"]["paneBackground"])
         self.spinBoxFont.pack()
 
     def deleteFontScrollableList(self):
@@ -212,7 +236,8 @@ class Interface:
         # On recupere la fonte choisie (defaut : standard)
         self.C.default_font = self.varFont.get()
         # On récupere le Titre du CD
-        self.C.cover_titre = self.CDtitre.get()
+        self.B.defaut_CD_title = self.CDtitre.get()
+
 
 
         for elem in self.edited_list_songs:
@@ -221,7 +246,7 @@ class Interface:
             self.B.mp3_dict[elem[0]]["key"] = str(elem[3].get())
             self.B.mp3_dict[elem[0]]["tempo"] = str(elem[4].get())
 
-        print(self.B.mp3_dict)
+
         try:
             self.saveButton.destroy()
             self.labelwarning.destroy()
@@ -229,16 +254,19 @@ class Interface:
             pass
 
         # Suppression de l'entry titre du CD
+        self.deleteSplashTitle()
         self.deleteNameFolder()
         self.deletePathFolder()
         self.deleteSongsLabels()
         self.deleteSongsList()
         self.deleteFontScrollableList()
 
+        self.B.buildHeader()
         self.B.buildListSongs()
 
+        self.displaySplashTitle()
         self.displayPathFolder()
-        self.displayNameFolder()
+        self.displayNameFolder(self.B.defaut_CD_title)
         self.displayFontScrollableList()
         self.displaySongsLabels()
         self.displaySongsList(self.B.mp3_dict)
