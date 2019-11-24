@@ -69,9 +69,11 @@ class Interface:
             self.saveButton.destroy()
             self.deleteSongsLabels()
             self.deleteSongsList()
+            self.deleteSaveButton()
             self.labelwarning.destroy()
         except AttributeError:
             pass
+
 
         # La fenetre de selection de dossier apparait
         self.rep = filedialog.askdirectory(initialdir=getLastPath(), title='Choisir un repertoire') + "/"
@@ -87,7 +89,7 @@ class Interface:
                 self.C = Mp3Processing(self.format_path)
                 self.B = BuildCover(self.C)
 
-                self.displaySplashTitle()
+                self.displayFigletTitle()
                 self.displayPathFolder()
 
 
@@ -97,18 +99,19 @@ class Interface:
                 self.displayFontScrollableList()
                 self.displaySongsLabels()
                 self.displaySongsList(self.C.list_mp3)
+                self.displaySaveButton()
             except HeaderNotFoundError:
                 print("Aucun fichier .mp3 trouvé !")
 
-    def displaySplashTitle(self):
+    def displayFigletTitle(self):
         f = Figlet(font=self.B.default_font)
         text = str(f.renderText(self.B.defaut_CD_title))
-        self.splash_title = Label(self.main_pane, text=text,font="{Lucida Console} 12",justify=LEFT, bg= self.config["color"]["paneBackground"])
-        self.splash_title.pack()
+        self.figlet_title = Label(self.main_pane, text=text, font=self.config["font"]["FigletTitle"], justify=LEFT, bg= self.config["color"]["paneBackground"])
+        self.figlet_title.pack()
 
     def deleteSplashTitle(self):
         try:
-            self.splash_title.destroy()
+            self.figlet_title.destroy()
         except AttributeError:
             pass
 
@@ -199,16 +202,28 @@ class Interface:
 
         self.labelwarning.grid(row=i, column=0)
 
-        # Déclaration du bouton 'Save'
-        self.saveButton = Button(self.Paned2, text='Save', command=self.save, padx=5, pady=5,bg=self.config["color"]["paneBackground"],relief="solid")
-        self.saveButton.grid(row=i, column=3)
 
-    def deleteSongsList(self):
+    def displaySaveButton(self):
         logging.info("start")
-        for sons in self.edited_list_songs:
-            for a in sons[1:]:
-                a.get()
-                a.destroy()
+        self.saveButton = Button(self.Paned2, text='Save', command=self.save, padx=5, pady=5,
+                                 bg=self.config["color"]["paneBackground"], relief="solid")
+        self.saveButton.grid()
+
+    def deleteSaveButton(self):
+        logging.info("start")
+        try:
+            self.saveButton.destroy()
+        except AttributeError:
+            pass
+    def deleteSongsList(self):
+        try:
+            logging.info("start")
+            for sons in self.edited_list_songs:
+                for a in sons[1:]:
+                    a.get()
+                    a.destroy()
+        except AttributeError:
+            pass
 
         # print(len(self.ListeSongs))
 
@@ -268,7 +283,7 @@ class Interface:
         self.B.buildHeader()
         self.B.buildListSongs()
 
-        self.displaySplashTitle()
+        self.displayFigletTitle()
         self.displayPathFolder()
         self.displayNameFolder(self.B.defaut_CD_title)
         self.displayFontScrollableList()
