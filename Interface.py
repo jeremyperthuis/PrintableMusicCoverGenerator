@@ -16,6 +16,7 @@ class Interface:
     rep=""
     edited_list_songs=[]
     config = configparser.ConfigParser()
+    count = 0
 
     def __init__(self):
         self.initLogging()
@@ -63,10 +64,10 @@ class Interface:
     def openDirectory(self):
         logging.info("start")
         try:
-            self.deleteFontScrollableList()
+            self.deleteFigletTitle()
             self.deletePathFolder()
             self.deleteNameFolder()
-            self.saveButton.destroy()
+            self.deleteFontScrollableList()
             self.deleteSongsLabels()
             self.deleteSongsList()
             self.deleteSaveButton()
@@ -77,7 +78,7 @@ class Interface:
 
         # La fenetre de selection de dossier apparait
         self.rep = filedialog.askdirectory(initialdir=getLastPath(), title='Choisir un repertoire') + "/"
-        self.format_path = self.rep.replace('/','\\')
+        self.format_path = os.path.abspath(self.rep)
 
         if len(self.rep) > 0:
             try:
@@ -88,6 +89,11 @@ class Interface:
                 # declaration des objets
                 self.C = Mp3Processing(self.format_path)
                 self.B = BuildCover(self.C)
+
+                if self.count >0:
+                    self.C.__init__()
+                    self.B.__init__()
+                self.count += 1
 
                 self.displayFigletTitle()
                 self.displayPathFolder()
@@ -109,7 +115,7 @@ class Interface:
         self.figlet_title = Label(self.main_pane, text=text, font=self.config["font"]["FigletTitle"], justify=LEFT, bg= self.config["color"]["paneBackground"])
         self.figlet_title.pack()
 
-    def deleteSplashTitle(self):
+    def deleteFigletTitle(self):
         try:
             self.figlet_title.destroy()
         except AttributeError:
@@ -200,8 +206,10 @@ class Interface:
             self.edited_list_songs.append(list(temp))
             i += 1
 
-        self.labelwarning.grid(row=i, column=0)
-
+        try:
+            self.labelwarning.grid(row=i, column=0)
+        except AttributeError:
+            pass
 
     def displaySaveButton(self):
         logging.info("start")
@@ -215,6 +223,7 @@ class Interface:
             self.saveButton.destroy()
         except AttributeError:
             pass
+
     def deleteSongsList(self):
         try:
             logging.info("start")
@@ -273,7 +282,7 @@ class Interface:
             pass
 
         # Suppression de l'entry titre du CD
-        self.deleteSplashTitle()
+        self.deleteFigletTitle()
         self.deleteNameFolder()
         self.deletePathFolder()
         self.deleteSongsLabels()
@@ -289,6 +298,7 @@ class Interface:
         self.displayFontScrollableList()
         self.displaySongsLabels()
         self.displaySongsList(self.B.mp3_dict)
+        self.displaySaveButton()
 
     # Genere la cover
     def generate(self):

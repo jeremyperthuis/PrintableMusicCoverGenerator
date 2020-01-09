@@ -18,7 +18,6 @@ class BuildCover:
     def __init__(self, mp3Processing):
         self.defaut_CD_title = mp3Processing.getDefautCDName()
         self.complete_path = mp3Processing.music_folder_path
-        self.mp3_dict = mp3Processing.list_mp3
 
     # Construit le Header titre du tableau imprimable dans coverExport
     def buildHeader(self):
