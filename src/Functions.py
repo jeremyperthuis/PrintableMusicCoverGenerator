@@ -63,11 +63,11 @@ def splitRawTitle(chaine):
 
 # Save in a txt file the last path
 def writeLastPath(path):
-    file = open("savePath.txt",'w', encoding="utf8")
+    file = open("themes/savePath.txt",'w', encoding="utf8")
     file.write(path)
 
 def getLastPath():
-    file=open("savePath.txt",'r', encoding="utf8")
+    file=open("themes/savePath.txt",'r', encoding="utf8")
     if(file.read() == ""):
         return("\\")
     else:

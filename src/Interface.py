@@ -31,7 +31,7 @@ class Interface:
         logger.setLevel(logging.INFO)
 
     def initConfigParser(self):
-        self.config.read("default.ini")
+        self.config.read("themes/default.ini")
 
     def setup(self):
         logging.info("start")
@@ -89,6 +89,7 @@ class Interface:
                 self.C = Mp3Processing(self.format_path)
                 self.B = BuildCover(self.C)
 
+                # reinitialise les objets lors de l'ouverture d'un nouveau dossier
                 if self.count > 0:
                     self.C.__init__(self.format_path)
                     self.B.__init__(self.C)
@@ -273,7 +274,7 @@ class Interface:
             self.B.mp3_dict[elem[0]]["key"] = str(elem[3].get())
             self.B.mp3_dict[elem[0]]["tempo"] = str(elem[4].get())
 
-
+        self.generate()
         try:
             self.saveButton.destroy()
             self.labelwarning.destroy()
@@ -306,7 +307,7 @@ class Interface:
             self.labelSucess.destroy()
         except AttributeError:
             pass
-
+        self.B.buildListSongs()
         self.B.writeTemplate()
         self.labelSucess=Label(self.root,text="Tracklist générée", bg=self.config["label"]["generateBackground"])
         self.labelSucess.pack(side="bottom")

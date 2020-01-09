@@ -73,6 +73,7 @@ class BuildCover:
 
     # Ecrit dans un fichier txt le cover final dans le dossier d'origine
     def writeTemplate(self):
+        print(self.cover_export)
         logging.info("start")
         file = open(os.path.join(self.complete_path,"tracklist.txt"), 'w', encoding="utf8")
         for elem in self.cover_export:
