@@ -8,7 +8,7 @@ import os
 
 import mutagen
 import datetime
-from Functions import *
+from src.Functions import *
 
 import logging
 

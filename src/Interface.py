@@ -1,14 +1,13 @@
-
+# coding: utf8
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import *
 from mutagen.mp3 import HeaderNotFoundError
-from BuildCover import *
+from src.BuildCover import *
 import logging
 import configparser
 from pyfiglet import Figlet
 
-import tkinter.font
 
 class Interface:
 
@@ -32,7 +31,7 @@ class Interface:
         logger.setLevel(logging.INFO)
 
     def initConfigParser(self):
-        self.config.read("theme.ini")
+        self.config.read("default.ini")
 
     def setup(self):
         logging.info("start")

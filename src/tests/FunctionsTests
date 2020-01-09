@@ -1,4 +1,4 @@
-from Functions import *
+from src.Functions import *
 
 
 def analyzeHyphenTest():

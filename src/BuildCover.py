@@ -1,7 +1,6 @@
-import logging
 from pyfiglet import Figlet
 from math import *
-from Mp3Processing import *
+from src.Mp3Processing import *
 
 class BuildCover:
 
