@@ -14,21 +14,19 @@ import logging
 
 class Mp3Processing:
     version = 1.5
-    music_folder_path = ""
-
-    list_mp3 = dict()
-
     logging.basicConfig(format='%(asctime)s  %(levelname)s : %(funcName)s  %(message)s')
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
     def __init__(self, path):
-
+        self.list_mp3 = dict()
         self.music_folder_path = os.path.abspath(path) if os.path.isdir(path) else "null"
         writeLastPath(path)
         self.scanFolder()
         self.addlength()
         self.addTitleArtist()
+
+
 
     # Stocke les titres dans l'ordre alphabetique dans listMusicTitle
     def scanFolder(self):

@@ -90,9 +90,9 @@ class Interface:
                 self.C = Mp3Processing(self.format_path)
                 self.B = BuildCover(self.C)
 
-                if self.count >0:
-                    self.C.__init__()
-                    self.B.__init__()
+                if self.count > 0:
+                    self.C.__init__(self.format_path)
+                    self.B.__init__(self.C)
                 self.count += 1
 
                 self.displayFigletTitle()
