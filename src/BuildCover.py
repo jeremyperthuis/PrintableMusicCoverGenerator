@@ -1,6 +1,9 @@
-from pyfiglet import Figlet
 from math import *
+
+from pyfiglet import Figlet
+
 from src.Mp3Processing import *
+
 
 class BuildCover:
 

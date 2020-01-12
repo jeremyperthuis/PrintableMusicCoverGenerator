@@ -12,8 +12,8 @@ from pyfiglet import Figlet
 class Interface:
 
     root = Tk()
-    rep=""
-    edited_list_songs=[]
+    rep = ""
+    edited_list_songs = []
     config = configparser.ConfigParser()
     count = 0
 
