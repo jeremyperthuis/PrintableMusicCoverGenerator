@@ -1,9 +1,3 @@
-'''
-    PrintableMusicCoverGenerator v1.5
-
-    Perthuis Jeremy
-'''
-
 import os
 
 import mutagen
@@ -14,9 +8,6 @@ import logging
 
 class Mp3Processing:
     version = 1.5
-    logging.basicConfig(format='%(asctime)s  %(levelname)s : %(funcName)s  %(message)s')
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
 
     def __init__(self, path):
         self.list_mp3 = dict()
@@ -69,6 +60,3 @@ class Mp3Processing:
             value["key"] = datas_dict["key"]
             value["tempo"] = datas_dict["tempo"]
             value["display_title"] = datas_dict["display_title"]
-
-if __name__ == '__main__':
-    M=Mp3Processing("F:\\Users\\Jeremy\\Developpement\\PrintableMusicCoverGenerator\\testCD")

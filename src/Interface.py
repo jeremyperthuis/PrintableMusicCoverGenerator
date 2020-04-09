@@ -5,7 +5,8 @@ from tkinter import *
 from mutagen.mp3 import HeaderNotFoundError
 from src.BuildCover import *
 import logging
-import configparser
+from src.main import config
+import os
 from pyfiglet import Figlet
 
 
@@ -14,24 +15,14 @@ class Interface:
     root = Tk()
     rep = ""
     edited_list_songs = []
-    config = configparser.ConfigParser()
+
     count = 0
 
     def __init__(self):
-        self.initLogging()
-        self.initConfigParser()
         self.root.title("Cover CD v1.6")
         self.root.minsize(600, 500)
-        self.root.config(background=self.config["color"]["rootBackground"])
+        self.root.config(background = config["color"]["rootBackground"])
         self.setup()
-
-    def initLogging(self):
-        logging.basicConfig(format='%(asctime)s  %(levelname)s : %(funcName)s  %(message)s')
-        logger = logging.getLogger()
-        logger.setLevel(logging.INFO)
-
-    def initConfigParser(self):
-        self.config.read("themes/default.ini")
 
     def setup(self):
         logging.info("start")
@@ -39,10 +30,10 @@ class Interface:
 
         # Panel Choix Dossier & Liste Mp3
         self.main_pane = PanedWindow(self.root, orient=HORIZONTAL,
-                                                bg=self.config["color"]["paneBackground"])
+                                                bg = config["color"]["paneBackground"])
         self.main_pane.pack(side=TOP)
 
-        self.Paned2=PanedWindow(self.root, orient=HORIZONTAL,bg=self.config["color"]["paneBackground"])
+        self.Paned2=PanedWindow(self.root, orient=HORIZONTAL,bg = config["color"]["paneBackground"])
         self.Paned2.pack()
 
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -112,7 +103,7 @@ class Interface:
     def displayFigletTitle(self):
         f = Figlet(font=self.B.default_font)
         text = str(f.renderText(self.B.defaut_CD_title))
-        self.figlet_title = Label(self.main_pane, text=text, font=self.config["font"]["FigletTitle"], justify=LEFT, bg= self.config["color"]["paneBackground"])
+        self.figlet_title = Label(self.main_pane, text=text, font=config["font"]["FigletTitle"], justify=LEFT, bg = config["color"]["paneBackground"])
         self.figlet_title.pack()
 
     def deleteFigletTitle(self):
@@ -123,7 +114,7 @@ class Interface:
 
     def displayPathFolder(self):
         logging.info("start")
-        self.labelPathCD = Label(self.main_pane, textvariable=self.path, width=60,bg=self.config["color"]["paneBackground"])
+        self.labelPathCD = Label(self.main_pane, textvariable=self.path, width=60,bg=config["color"]["paneBackground"])
         self.labelPathCD.pack()
 
     def deletePathFolder(self):
@@ -136,7 +127,7 @@ class Interface:
         logging.info("start")
         self.CDtitre = StringVar()
         self.CDtitre.set(nameCD)
-        self.entryTitreCD = Entry(self.main_pane, textvariable=self.CDtitre, width=20, justify=CENTER,bg=self.config["color"]["paneBackground"],relief="solid")
+        self.entryTitreCD = Entry(self.main_pane, textvariable=self.CDtitre, width=20, justify=CENTER,bg=config["color"]["paneBackground"],relief="solid")
         self.entryTitreCD.pack()
         self.edited_list_songs=[]
 
@@ -151,13 +142,13 @@ class Interface:
         logging.info("start")
         # Déclaration des Labels
         i = 0
-        self.labeltitre=Label(self.Paned2,text="Title",bg=self.config["color"]["paneBackground"])
+        self.labeltitre=Label(self.Paned2,text="Title",bg=config["color"]["paneBackground"])
         self.labeltitre.grid(row=i,column=0)
-        self.labelduree = Label(self.Paned2, text="Length",bg=self.config["color"]["paneBackground"])
+        self.labelduree = Label(self.Paned2, text="Length",bg=config["color"]["paneBackground"])
         self.labelduree.grid(row=i,column=1)
-        self.labelbpm = Label(self.Paned2, text="Key",bg=self.config["color"]["paneBackground"])
+        self.labelbpm = Label(self.Paned2, text="Key",bg=config["color"]["paneBackground"])
         self.labelbpm.grid(row=i,column=2)
-        self.labelkey=Label(self.Paned2,text="Tempo",bg=self.config["color"]["paneBackground"])
+        self.labelkey=Label(self.Paned2,text="Tempo",bg=config["color"]["paneBackground"])
         self.labelkey.grid(row=i,column=3)
 
     def deleteSongsLabels(self):
@@ -184,22 +175,22 @@ class Interface:
             duree = StringVar(self.Paned2, value=value['length'])
 
             # Affichage des titres
-            entryTitre = Entry(self.Paned2, textvariable=titre, width=60,bg=self.config["color"]["paneBackground"],relief="solid")
+            entryTitre = Entry(self.Paned2, textvariable=titre, width=60,bg=config["color"]["paneBackground"],relief="solid")
             if len(value["display_title"]) > self.B.title_limit:
-                self.labelwarning = Label(self.Paned2, text="Title too long !", fg=self.config['color']['labelWarningColor'],bg=self.config["color"]["paneBackground"])
+                self.labelwarning = Label(self.Paned2, text="Title too long !", fg=config['color']['labelWarningColor'],bg=config["color"]["paneBackground"])
                 entryTitre.configure(background="indianred1")
             entryTitre.grid(row=i, column=0)
             temp.append(entryTitre)
 
-            entryDuree = Entry(self.Paned2, textvariable=duree, width=8, state='disabled',disabledbackground=self.config["color"]["paneBackground"],disabledforeground ="black",relief="solid")
+            entryDuree = Entry(self.Paned2, textvariable=duree, width=8, state='disabled',disabledbackground=config["color"]["paneBackground"],disabledforeground ="black",relief="solid")
             entryDuree.grid(row=i, column=1)
             temp.append(entryDuree)
 
-            entryKey = Entry(self.Paned2, textvariable=key, width=8,bg=self.config["color"]["paneBackground"],relief="solid")
+            entryKey = Entry(self.Paned2, textvariable=key, width=8,bg=config["color"]["paneBackground"],relief="solid")
             entryKey.grid(row=i, column=2)
             temp.append(entryKey)
 
-            entryBpm = Entry(self.Paned2, textvariable=bpm, width=8,bg=self.config["color"]["paneBackground"],relief="solid")
+            entryBpm = Entry(self.Paned2, textvariable=bpm, width=8,bg=config["color"]["paneBackground"],relief="solid")
             entryBpm.grid(row=i, column=3)
             temp.append(entryBpm)
 
@@ -214,7 +205,7 @@ class Interface:
     def displaySaveButton(self):
         logging.info("start")
         self.saveButton = Button(self.Paned2, text='Save', command=self.save, padx=5, pady=5,
-                                 bg=self.config["color"]["paneBackground"], relief="solid")
+                                 bg=config["color"]["paneBackground"], relief="solid")
         self.saveButton.grid()
 
     def deleteSaveButton(self):
@@ -241,13 +232,13 @@ class Interface:
         self.varFont = StringVar(self.Paned2)
         self.varFont.set(self.B.default_font)
         self.spinBoxFont = OptionMenu(self.main_pane, self.varFont, *self.B.list_font)
-        self.spinBoxFont.config(bg=self.config["color"]["paneBackground"],
-                                activebackground=self.config["color"]["paneBackground"],
+        self.spinBoxFont.config(bg=config["color"]["paneBackground"],
+                                activebackground=config["color"]["paneBackground"],
                                 padx=1,
                                 pady=1,
                                 relief="solid",
                                 highlightthickness=0,
-                                highlightcolor=self.config["border"]["scrollableList"],
+                                highlightcolor=config["border"]["scrollableList"],
                                 borderwidth=1)
         self.spinBoxFont.pack()
 
@@ -309,14 +300,10 @@ class Interface:
             pass
         self.B.buildListSongs()
         self.B.writeTemplate()
-        self.labelSucess=Label(self.root,text="Tracklist générée", bg=self.config["label"]["generateBackground"])
+        self.labelSucess=Label(self.root,text="Tracklist générée", bg=config["label"]["generateBackground"])
         self.labelSucess.pack(side="bottom")
 
     def on_closing(self):
         logging.info("start")
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
             self.root.destroy()
-
-
-
-g=Interface()
