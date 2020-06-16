@@ -12,9 +12,6 @@ class BuildCover:
     title_limit = 52
     template_details = []
     cover_export = []
-    logging.basicConfig(format='%(asctime)s  %(levelname)s : %(funcName)s  %(message)s')
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
     defaut_CD_title = ""
 
     def __init__(self, mp3Processing):
