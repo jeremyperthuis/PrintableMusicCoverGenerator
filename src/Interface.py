@@ -174,8 +174,7 @@ class Interface:
         logging.info("start")
         i=1
         self.edited_list_songs.clear()
-
-        for key, value in mp3_dict.items():
+        for key, value in sorted(mp3_dict.items()):
             temp = []
             temp.append(list(mp3_dict.keys())[i-1])
             titre = StringVar(self.Paned2, value=value['display_title'])
