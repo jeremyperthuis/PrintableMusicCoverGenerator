@@ -201,6 +201,7 @@ class Interface:
         except AttributeError:
             pass
 
+
     def displaySaveButton(self):
         logging.info("start")
         self.saveButton = Button(self.Paned2, text='Save', command=self.save, padx=5, pady=5,
@@ -255,8 +256,6 @@ class Interface:
         self.B.default_font = self.varFont.get()
         # On récupere le Titre du CD
         self.B.defaut_CD_title = self.CDtitre.get()
-
-
 
         for elem in self.edited_list_songs:
             self.B.mp3_dict[elem[0]]["display_title"] = str(elem[1].get())

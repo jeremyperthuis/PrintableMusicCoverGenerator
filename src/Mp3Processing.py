@@ -22,7 +22,8 @@ class Mp3Processing:
     # Stocke les titres dans l'ordre alphabetique dans listMusicTitle
     def scanFolder(self):
         logging.info("start")
-        for file in os.listdir(self.music_folder_path):
+
+        for file in sorted(os.listdir(self.music_folder_path)):
             try:
                 mutagen.File(os.path.join(self.music_folder_path, file))
                 if isMP3(file):
@@ -32,7 +33,7 @@ class Mp3Processing:
             except mutagen.MutagenError:
                 logging.warning(" {0} n'est pas un fichier compatible".format(file))
         logging.info("end : {0} fichiers .mp3 traité(s)".format(len(self.list_mp3)))
-
+        print("list_mp3 : {0}".format(self.list_mp3))
     # ajoute le noeud terminal du path (Nom pas défaut du CD)
     def getDefautCDName(self):
         logging.info("start")
