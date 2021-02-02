@@ -21,9 +21,9 @@ class Interface:
 
     def __init__(self):
         logging.basicConfig(format='%(asctime)s  %(levelname)s : %(funcName)s  %(message)s', level=logging.INFO)
-        path = os.path.dirname(os.path.abspath("."))
+        path = os.path.join(os.getcwd(),os.path.abspath(".."))
         self.config = configparser.ConfigParser()
-        self.config.read("themes/default.ini")
+        self.config.read(os.path.join(path,os.path.abspath("themes/default.ini")))
         self.root.title("Cover CD v1.6")
         self.root.minsize(600, 500)
         self.root.config(background = self.config["color"]["rootBackground"])
@@ -312,5 +312,8 @@ class Interface:
             self.root.destroy()
 
 
+def main():
+    g=Interface()
 
-g=Interface()
+if __name__ == '__main__':
+    main()
