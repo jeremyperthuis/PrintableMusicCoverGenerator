@@ -1,10 +1,8 @@
 import os
-
-import mutagen
+from mutagen import File, mp3, MutagenError
 import datetime
-from src.Functions import *
-
 import logging
+from utils import writeLastPath, isMP3, splitRawTitle
 
 class Mp3Processing:
     version = 1.5
@@ -18,22 +16,22 @@ class Mp3Processing:
         self.addTitleArtist()
 
 
-
-    # Stocke les titres dans l'ordre alphabetique dans listMusicTitle
     def scanFolder(self):
-        logging.info("start")
-
+        """
+        store music titles in alphabetical order
+        """
         for file in sorted(os.listdir(self.music_folder_path)):
             try:
-                mutagen.File(os.path.join(self.music_folder_path, file))
+                File(os.path.join(self.music_folder_path, file))
                 if isMP3(file):
                     self.list_mp3[file] = dict()
                 else:
-                    logging.warning("  {0} n'est pas un fichier .mp3".format(file))
-            except mutagen.MutagenError:
-                logging.warning(" {0} n'est pas un fichier compatible".format(file))
-        logging.info("end : {0} fichiers .mp3 traité(s)".format(len(self.list_mp3)))
-        print("list_mp3 : {0}".format(self.list_mp3))
+                    logging.warning("  Is not mp3 file : {}".format(file))
+            except MutagenError:
+                logging.warning(" Mutagen Error unknown file  : {}".format(file))
+
+        logging.info("OK : {} .mp3 file(s) processed".format(len(self.list_mp3)))
+
     # ajoute le noeud terminal du path (Nom pas défaut du CD)
     def getDefautCDName(self):
         logging.info("start")
@@ -45,8 +43,7 @@ class Mp3Processing:
         logging.info("start")
         for elem in self.list_mp3:
             self.list_mp3[elem]["length"] = str(
-                datetime.timedelta(seconds=mutagen.mp3.MP3(os.path.join(self.music_folder_path, str(elem))).info.length))[
-                   2:7]
+                datetime.timedelta(seconds=mp3.MP3(os.path.join(self.music_folder_path, str(elem))).info.length))[2:7]
         logging.info("end")
 
     # Stocke les titres, artistes, clés et tempo dans list_mp3

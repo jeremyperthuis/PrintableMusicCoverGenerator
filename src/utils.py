@@ -1,9 +1,14 @@
 import re
+import os
+import logging
 
-
-# Retire les espaces blanc aux extremites d'une chaine de caractere
-#   '  les pains ' -> 'les pains'
 def removeEndpointSpace(chaine):
+    """
+    Remove Blank space at the beginning and end of the string
+    eg : ' test ' -> 'test'
+    :param chaine:
+    :return: chaine without blank space
+    """
     if chaine[-1:] == ' ':
         return removeEndpointSpace(chaine[:-1])
     elif chaine[:1] == ' ':
@@ -63,15 +68,25 @@ def splitRawTitle(chaine):
 
 # Save in a txt file the last path
 def writeLastPath(path):
-    file = open("themes/savePath.txt",'w', encoding="utf8")
+    file = open(os.path.abspath("themes/savePath.txt"),'w', encoding="utf8")
     file.write(path)
 
 def getLastPath():
-    file=open("themes/savePath.txt",'r', encoding="utf8")
-    if(file.read() == ""):
-        return("\\")
-    else:
-        return(file.read())
+    """
+        If exist, open file which contain path to last opened directory, creates one instead.
+        :return String path if existed, None if not
+    """
+    file_path = os.path.abspath("themes/savePath.txt")
+    try :
+        file = open(file_path,'r', encoding="utf8")
+        logging.info("read file : savePath.txt")
+        return (file.read())
+    except IOError:
+        file = open(file_path, 'w', encoding="utf8")
+        logging.info("Error IO file doesnt exists : savePath.txt created")
+        return os.path.abspath('/')
+
+
 
 def isMP3(file):
     regex_mp3 = "^.*\.mp3$"

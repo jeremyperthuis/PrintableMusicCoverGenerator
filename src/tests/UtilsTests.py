@@ -1,4 +1,4 @@
-from src.Functions import *
+from utils import *
 
 
 def analyzeHyphenTest():
@@ -18,4 +18,3 @@ def lastPathTest():
     print(getLastPath())
 
 
-analyzeHyphenTest()

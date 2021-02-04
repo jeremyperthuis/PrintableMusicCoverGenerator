@@ -1,8 +1,8 @@
-from math import *
-
+import logging
+import os
+from math import floor
 from pyfiglet import Figlet
-
-from src.Mp3Processing import *
+from Mp3Processing import Mp3Processing
 
 
 class BuildCover:

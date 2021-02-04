@@ -1,39 +1,37 @@
 # coding: utf8
-from tkinter import filedialog
-from tkinter import messagebox
-from tkinter import *
-from mutagen.mp3 import HeaderNotFoundError
-from src.BuildCover import *
 import logging
-
 import os
+from configparser import ConfigParser
+from tkinter import filedialog, messagebox, PanedWindow
+from tkinter import *
 from pyfiglet import Figlet
-import configparser
+from mutagen.mp3 import HeaderNotFoundError
+from BuildCover import BuildCover
+from Mp3Processing import Mp3Processing
+from utils import getLastPath
 
 
 class Interface:
 
     root = Tk()
-    rep = ""
+    chosenFolder = ""
     edited_list_songs = []
-
     count = 0
 
     def __init__(self):
         logging.basicConfig(format='%(asctime)s  %(levelname)s : %(funcName)s  %(message)s', level=logging.INFO)
-        path = os.path.join(os.getcwd(),os.path.abspath(".."))
-        self.config = configparser.ConfigParser()
-        self.config.read(os.path.join(path,os.path.abspath("themes/default.ini")))
-        self.root.title("Cover CD v1.6")
+        self.config = ConfigParser()
+        self.config.read(os.path.abspath('themes/default.ini'))
+        self.root.title('Cover CD v1.6')
         self.root.minsize(600, 500)
-        self.root.config(background = self.config["color"]["rootBackground"])
+        self.root.config(background=self.config['color']['rootBackground'])
         self.setup()
 
     def setup(self):
-        logging.info("start")
+        logging.info("Start application")
         self.displayMenuBar()
 
-        # Panel Choix Dossier & Liste Mp3
+        #Panel Choix Dossier & Liste Mp3
         self.main_pane = PanedWindow(self.root, orient=HORIZONTAL,
                                                 bg = self.config["color"]["paneBackground"])
         self.main_pane.pack(side=TOP)
@@ -49,59 +47,58 @@ class Interface:
         menu_bar = Menu(self.root)
         self.root.config(menu=menu_bar)
         self.menu_fichier = Menu(menu_bar, tearoff=0)
-        menu_bar.add_cascade(label="Fichier", menu=self.menu_fichier)
-        self.menu_fichier.add_command(label="Ouvrir dossier", command=self.openDirectory)
-        self.menu_fichier.add_command(label="Générer tracklist", command=self.generate, state="disabled")
+        menu_bar.add_cascade(label="File", menu=self.menu_fichier)
+        self.menu_fichier.add_command(label="Open folder", command=self.openDirectory)
+        self.menu_fichier.add_command(label="Save tracklist", command=self.generate, state="disabled")
         self.menu_fichier.add_separator()
-        self.menu_fichier.add_command(label="Quitter", command=self.root.destroy)
+        self.menu_fichier.add_command(label="Quit", command=self.root.destroy)
 
     # Bouton choisir un dossier
     def openDirectory(self):
         logging.info("start")
-        try:
-            self.deleteFigletTitle()
-            self.deletePathFolder()
-            self.deleteNameFolder()
-            self.deleteFontScrollableList()
-            self.deleteSongsLabels()
-            self.deleteSongsList()
-            self.deleteSaveButton()
-            self.labelwarning.destroy()
-        except AttributeError:
-            pass
-
 
         # La fenetre de selection de dossier apparait
-        self.rep = filedialog.askdirectory(initialdir=getLastPath(), title='Choisir un repertoire') + "/"
-        self.format_path = os.path.abspath(self.rep)
+        self.chosenFolder = filedialog.askdirectory(initialdir=getLastPath(), title='Choose a folder')
+        logging.info("self.chosenfolder : {}".format(self.chosenFolder))
+        self.chosenFolder = os.path.abspath(self.chosenFolder)
 
-        if len(self.rep) > 0:
+        if self.chosenFolder:
+            try:
+                self.deleteFigletTitle()
+                self.deletePathFolder()
+                self.deleteNameFolder()
+                self.deleteFontScrollableList()
+                self.deleteSongsLabels()
+                self.deleteSongsList()
+                self.deleteSaveButton()
+                self.labelSucess.destroy()
+
+            except AttributeError:
+                pass
             try:
                 # Affichage du label du path complet
                 self.path=StringVar()
-                self.path.set(self.rep)
+                self.path.set(self.chosenFolder)
 
                 # declaration des objets
-                self.C = Mp3Processing(self.format_path)
+                self.C = Mp3Processing(self.chosenFolder)
                 self.B = BuildCover(self.C)
 
                 # reinitialise les objets lors de l'ouverture d'un nouveau dossier
                 if self.count > 0:
-                    self.C.__init__(self.format_path)
+                    self.C.__init__(self.chosenFolder)
                     self.B.__init__(self.C)
                 self.count += 1
+                self.menu_fichier.entryconfig(1, state="active")
 
                 self.displayFigletTitle()
                 self.displayPathFolder()
-
-
-                self.menu_fichier.entryconfig(1, state="active")
-
                 self.displayNameFolder(self.C.getDefautCDName())
                 self.displayFontScrollableList()
                 self.displaySongsLabels()
                 self.displaySongsList(self.C.list_mp3)
                 self.displaySaveButton()
+
             except HeaderNotFoundError:
                 print("Aucun fichier .mp3 trouvé !")
 
@@ -137,9 +134,9 @@ class Interface:
         self.edited_list_songs=[]
 
     def deleteNameFolder(self):
-        logging.info("start")
         try:
             self.entryTitreCD.destroy()
+            logging.info("OK")
         except AttributeError:
             pass
 
@@ -157,19 +154,23 @@ class Interface:
         self.labelkey.grid(row=i,column=3)
 
     def deleteSongsLabels(self):
-        logging.info("start")
         try:
             self.labeltitre.destroy()
             self.labelbpm.destroy()
             self.labelduree.destroy()
             self.labelkey.destroy()
+            logging.info("OK")
         except AttributeError:
             pass
 
     def displaySongsList(self, mp3_dict):
         logging.info("start")
         i=1
+        logging.info('edited_list_songs'.format(self.edited_list_songs))
         self.edited_list_songs.clear()
+        logging.info('edited_list_songs'.format(self.edited_list_songs))
+        logging.info('mp3_dict items'.format(mp3_dict.items()))
+
         for key, value in sorted(mp3_dict.items()):
             temp = []
             temp.append(list(mp3_dict.keys())[i-1])
@@ -179,10 +180,9 @@ class Interface:
             duree = StringVar(self.Paned2, value=value['length'])
 
             # Affichage des titres
-            entryTitre = Entry(self.Paned2, textvariable=titre, width=60,bg=self.config["color"]["paneBackground"],relief="solid")
+            entryTitre = Entry(self.Paned2, textvariable=titre, width=55,bg=self.config['color']['paneBackground'],relief="solid")
             if len(value["display_title"]) > self.B.title_limit:
-                self.labelwarning = Label(self.Paned2, text="Title too long !", fg=self.config['color']['labelWarningColor'],bg=self.config["color"]["paneBackground"])
-                entryTitre.configure(background="indianred1")
+                entryTitre.configure(background=self.config['color']['exceedLimitLength'])
             entryTitre.grid(row=i, column=0)
             temp.append(entryTitre)
 
@@ -201,11 +201,6 @@ class Interface:
             self.edited_list_songs.append(list(temp))
             i += 1
 
-        try:
-            self.labelwarning.grid(row=i, column=0)
-        except AttributeError:
-            pass
-
 
     def displaySaveButton(self):
         logging.info("start")
@@ -214,23 +209,22 @@ class Interface:
         self.saveButton.grid()
 
     def deleteSaveButton(self):
-        logging.info("start")
         try:
             self.saveButton.destroy()
+            logging.info("OK")
         except AttributeError:
             pass
 
     def deleteSongsList(self):
         try:
-            logging.info("start")
             for sons in self.edited_list_songs:
                 for a in sons[1:]:
                     a.get()
                     a.destroy()
+            logging.info("OK")
         except AttributeError:
             pass
 
-        # print(len(self.ListeSongs))
 
     def displayFontScrollableList(self):
         logging.info("start")
@@ -248,9 +242,9 @@ class Interface:
         self.spinBoxFont.pack()
 
     def deleteFontScrollableList(self):
-        logging.info("start")
         try:
             self.spinBoxFont.destroy()
+            logging.info("OK")
         except AttributeError:
             pass
 
@@ -271,7 +265,6 @@ class Interface:
         self.generate()
         try:
             self.saveButton.destroy()
-            self.labelwarning.destroy()
         except AttributeError:
             pass
 
@@ -301,6 +294,7 @@ class Interface:
             self.labelSucess.destroy()
         except AttributeError:
             pass
+
         self.B.buildListSongs()
         self.B.writeTemplate()
         self.labelSucess=Label(self.root,text="Tracklist générée", bg=self.config["label"]["generateBackground"])
